@@ -7,4 +7,9 @@ ConfigModel {
          icon: 'preferences-system-windows'
          source: 'config/ConfigGeneral.qml'
     }
+    ConfigCategory {
+         name: i18n('Misc')
+         icon: 'preferences-system-windows'
+         source: 'config/ConfigMisc.qml'
+    }
 }

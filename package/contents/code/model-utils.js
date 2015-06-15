@@ -48,10 +48,10 @@ function initModels(savedSourceObjects, temperatureModel) {
         var doNotShow = savedSourceObj.parentSource ? true : false
         var newObject = {
             sourceName: savedSourceObj.sourceName,
-            deviceName: savedSourceObj.deviceName,
+            deviceName: savedSourceObj.alias,
             temperature: 0,
-            warningTemperature: 45,
-            meltdownTemperature: 50,
+//             warningTemperature: plasmoid.configuration.warningTemperature,
+//             meltdownTemperature: plasmoid.configuration.meltdownTemperature,
             doNotShow: doNotShow,
             childObjects: []
         }

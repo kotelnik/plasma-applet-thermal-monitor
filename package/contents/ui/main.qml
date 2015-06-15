@@ -20,6 +20,7 @@ import QtGraphicalEffects 1.0
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import "../code/model-utils.js" as ModelUtils
+import "../code/config-utils.js" as ConfigUtils
 
 Item {
     id: main
@@ -28,11 +29,11 @@ Item {
     
     // configuration
     property bool fahrenheitEnabled: plasmoid.configuration.fahrenheitEnabled
-    property int rowCount: plasmoid.configuration.rowCount
-    property int monitorCount: plasmoid.configuration.monitorCount
+    property var configuredResources: plasmoid.configuration.resources
+    property int updateInterval: 1000 * plasmoid.configuration.updateInterval
     
     property int itemMargin: 5
-    property double itemWidth:  (vertical ? parent.width : parent.height) / rowCount
+    property double itemWidth:  parent === null ? 0 : vertical ? parent.width : parent.height
     property double itemHeight: itemWidth
     property double fontPointSize: itemHeight * 0.2
     
@@ -50,12 +51,9 @@ Item {
     
     property var systemmonitorAvailableSources: []
     property var systemmonitorSourcesToAdd: []
-    property var systemmonitorSources: []
-    property var hddtempSources: []
-    property var nvidiaSources: []
     
-    property double overallWidth: itemWidth * Math.ceil(monitorCount / rowCount)
-    property double overallHeight: itemHeight * rowCount
+    property double overallWidth: vertical ? itemWidth : visualModel.count * itemWidth + (visualModel.count-1) * itemMargin
+    property double overallHeight: vertical ? visualModel.count * itemHeight + (visualModel.count-1) * itemMargin : itemHeight
     
     Layout.maximumWidth:  overallWidth
     Layout.maximumHeight: overallHeight
@@ -65,11 +63,23 @@ Item {
         source: 'plasmapackage:/fonts/fontawesome-webfont-4.3.0.ttf'
     }
     
-    GridView {
+//     GridView {
+//         id: listView
+//         anchors.fill: parent
+//         cellWidth: itemWidth
+//         cellHeight: itemHeight
+//         
+//         model: visualModel
+//         
+//         delegate: TemperatureItem {}
+//     }
+
+    ListView {
         id: listView
         anchors.fill: parent
-        cellWidth: itemWidth
-        cellHeight: itemHeight
+        
+        orientation: vertical ? ListView.Vertical : ListView.Horizontal
+        spacing: itemMargin
         
         model: visualModel
         
@@ -96,31 +106,33 @@ Item {
         reloadAllSources()
     }
     
+    onConfiguredResourcesChanged: {
+        reloadAllSources()
+    }
+    
+    onVerticalChanged: {
+        refreshView()
+    }
+    
     function reloadAllSources() {
-        var savedSourceObjects = JSON.parse(plasmoid.configuration.savedSourcesJson)
-        savedSourceObjects = [
-            {
-                sourceName: 'lmsensors/coretemp-isa-0000/Physical_id_0',
-                deviceName: 'CPU'
-            },
-            {
-                sourceName: 'lmsensors/acpitz-virtual-0/temp1',
-                deviceName: 'GPU'
-            },
-            {
-                sourceName: 'hddtemp-/dev/sda',
-                deviceName: 'HDD'
-            }
-        ]
+        var resources = ConfigUtils.getResourcesObjectArray()
         
         temperatureModel.clear()
+        
+        if (!systemmonitorAvailableSources) {
+            systemmonitorAvailableSources = []
+        }
+        
+        if (!systemmonitorSourcesToAdd) {
+            systemmonitorSourcesToAdd = []
+        }
         
         systemmonitorSourcesToAdd.length = 0
         systemmonitorDS.connectedSources.length = 0
         hddtempDS.connectedSources.length = 0
         nvidiaDS.connectedSources.length = 0
         
-        ModelUtils.initModels(savedSourceObjects, temperatureModel)
+        ModelUtils.initModels(resources, temperatureModel)
         
         for (var i = 0; i < temperatureModel.count; i++) {
             var tempObj = temperatureModel.get(i)
@@ -150,6 +162,8 @@ Item {
                 
             }
         }
+        
+        refreshView()
     }
     
     PlasmaCore.DataSource {
@@ -169,7 +183,7 @@ Item {
                 var staIndex = systemmonitorSourcesToAdd.indexOf(source)
                 if (staIndex > -1) {
                     systemmonitorDS.connectedSources.push(source)
-                    systemmonitorSourcesToAdd.remove(staIndex)
+                    systemmonitorSourcesToAdd.splice(staIndex, 1)
                 }
             }
         }
@@ -181,7 +195,7 @@ Item {
             print('New data incomming. Source: ' + sourceName + ', data: ' + data.value);
             ModelUtils.updateTemperatureModel(temperatureModel, sourceName, parseFloat(data.value))
         }
-        interval: 1000 * plasmoid.configuration.updateInterval
+        interval: updateInterval
     }
     
     PlasmaCore.DataSource {
@@ -204,7 +218,7 @@ Item {
             
             //ModelUtils.computeVirtuals(temperatureModel)
         }
-        interval: 1000 * plasmoid.configuration.updateInterval
+        interval: updateInterval
     }
     
     PlasmaCore.DataSource {
@@ -222,7 +236,7 @@ Item {
             print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
             ModelUtils.updateTemperatureModel(temperatureModel, nvidiaSource, parseFloat(data.stdout))
         }
-        interval: 1000 * plasmoid.configuration.updateInterval
+        interval: updateInterval
     }
     
 }
