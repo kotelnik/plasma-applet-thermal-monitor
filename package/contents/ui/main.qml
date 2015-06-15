@@ -49,7 +49,7 @@ Item {
     property double temperatureFontSize: itemHeight * 0.35
     property double iconFontSize: itemHeight * 0.15
     
-    property var systemmonitorAvailableSources: []
+    property var systemmonitorAvailableSources: systemmonitorDS.sources
     property var systemmonitorSourcesToAdd: []
     
     property double overallWidth: vertical ? itemWidth : visualModel.count * itemWidth + (visualModel.count-1) * itemMargin
@@ -119,10 +119,6 @@ Item {
         
         temperatureModel.clear()
         
-        if (!systemmonitorAvailableSources) {
-            systemmonitorAvailableSources = []
-        }
-        
         if (!systemmonitorSourcesToAdd) {
             systemmonitorSourcesToAdd = []
         }
@@ -142,7 +138,7 @@ Item {
                 
                 print('adding source: ' + source)
                 
-                if (systemmonitorAvailableSources.indexOf(source) > -1) {
+                if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
                     print('adding to connected')
                     systemmonitorDS.connectedSources.push(source)
                 } else {
@@ -162,8 +158,6 @@ Item {
                 
             }
         }
-        
-        refreshView()
     }
     
     PlasmaCore.DataSource {
