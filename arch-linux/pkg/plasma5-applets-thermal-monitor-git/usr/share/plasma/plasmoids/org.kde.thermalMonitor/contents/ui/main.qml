@@ -228,7 +228,7 @@ Item {
                 return
             }
             print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
-            ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', parseFloat(data.stdout))
+            ModelUtils.updateTemperatureModel(temperatureModel, nvidiaSource, parseFloat(data.stdout))
         }
         interval: updateInterval
     }

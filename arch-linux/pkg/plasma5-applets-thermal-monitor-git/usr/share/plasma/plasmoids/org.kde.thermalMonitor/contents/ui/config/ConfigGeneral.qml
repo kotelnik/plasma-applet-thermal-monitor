@@ -254,7 +254,7 @@ Item {
             var hddtempObjects = ModelUtils.parseHddtemp(data.stdout)
             hddtempObjects.forEach(function (hddtempObj) {
                 var source = hddtempObj.sourceName
-                if (comboboxModel.indexOf(source) > -1 || isNaN(hddtempObj.temperature)) {
+                if (comboboxModel.indexOf(source) > -1) {
                     return
                 }
                 comboboxModel.push(source)

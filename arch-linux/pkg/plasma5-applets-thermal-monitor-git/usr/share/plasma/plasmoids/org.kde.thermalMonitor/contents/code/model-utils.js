@@ -40,12 +40,6 @@ function updateTemperatureModel(existingModel, key, temperature) {
     
     print('updating model with temperature: ' + temperature + ', key: ' + key + ', i: ' + modelIndexByKey[key])
     
-    var index = modelIndexByKey[key]
-    if (index === undefined) {
-        print('index not found for key: ' + key)
-        return
-    }
-    
     existingModel.setProperty(modelIndexByKey[key], 'temperature', temperature)
 }
 
@@ -81,15 +75,11 @@ function parseHddtemp(hddtempStr) {
     var deviceStrings = hddtempStr.split('||')
     var resultObjects = []
     
-    if (deviceStrings.length > 0) {
-        deviceStrings[0] = deviceStrings[0].substring(1)
-    }
-    
     deviceStrings.forEach(function (deviceStr) {
         var splitted = deviceStr.split('|')
         resultObjects.push({
-            sourceName: 'hddtemp-' + splitted[0],
-            temperature: parseFloat(splitted[2])
+            sourceName: 'hddtemp-' + splitted[1],
+            temperature: parseFloat(splitted[3])
         })
     })
     
