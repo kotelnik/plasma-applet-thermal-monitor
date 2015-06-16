@@ -3,13 +3,18 @@ import org.kde.plasma.configuration 2.0
 
 ConfigModel {
     ConfigCategory {
-         name: i18n('General')
-         icon: 'preferences-system-windows'
-         source: 'config/ConfigGeneral.qml'
+         name: i18n('Temperature')
+         icon: 'preferences-desktop-temperature'
+         source: 'config/ConfigTemperatures.qml'
+    }
+    ConfigCategory {
+         name: i18n('Appearance')
+         icon: 'preferences-desktop-color'
+         source: 'config/ConfigAppearance.qml'
     }
     ConfigCategory {
          name: i18n('Misc')
-         icon: 'preferences-system-windows'
+         icon: 'preferences-system-other'
          source: 'config/ConfigMisc.qml'
     }
 }

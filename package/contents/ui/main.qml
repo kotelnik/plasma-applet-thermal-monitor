@@ -45,9 +45,11 @@ Item {
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
     
-    property double deviceNameFontSize: itemHeight * 0.2
-    property double temperatureFontSize: itemHeight * 0.35
-    property double iconFontSize: itemHeight * 0.15
+    property double aliasFontSize: itemHeight * plasmoid.configuration.aliasFontSize * 0.01
+    property double temperatureFontSize: itemHeight * plasmoid.configuration.temperatureFontSize * 0.01
+    property double iconFontSize: itemHeight * plasmoid.configuration.iconFontSize * 0.01
+    property double temperatureRightMargin: itemHeight * plasmoid.configuration.temperatureRightMargin * 0.01
+    property double iconBottomMargin: itemHeight * plasmoid.configuration.iconBottomMargin * 0.01
     
     property var systemmonitorAvailableSources: systemmonitorDS.sources
     property var systemmonitorSourcesToAdd: []

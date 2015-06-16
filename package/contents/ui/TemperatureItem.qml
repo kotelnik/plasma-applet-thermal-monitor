@@ -39,7 +39,7 @@ Item {
         id: deviceNameText
         
         color: theme.textColor
-        font.pointSize: deviceNameFontSize
+        font.pointSize: aliasFontSize
         
         text: deviceName
     }
@@ -48,6 +48,7 @@ Item {
         id: stateIcon
         
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: iconBottomMargin
         anchors.right: parent.right
         
         color: meltdownState ? '#FFFF0000' : warningState ? '#FFFF8000' : '#FF66FF66'
@@ -63,6 +64,7 @@ Item {
         
         anchors.bottom: parent.bottom
         anchors.right: parent.right
+        anchors.rightMargin: temperatureRightMargin
         
         color: theme.textColor
         font.pointSize: temperatureFontSize
