@@ -65,7 +65,7 @@ Item {
         }
         
         Label {
-            text: i18n('Icon bottom margin:')
+            text: i18n('Notification icon bottom margin:')
             Layout.alignment: Qt.AlignRight
         }
         Slider {
