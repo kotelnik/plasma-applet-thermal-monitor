@@ -40,9 +40,6 @@ Item {
     property color warningColor: Qt.tint(theme.textColor, '#60FF0000')
     property var textFontFamily: theme.defaultFont.family
     
-    Layout.minimumWidth: Layout.maximumWidth
-    Layout.minimumHeight: Layout.maximumHeight
-    
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
     
     property double aliasFontSize: itemHeight * plasmoid.configuration.aliasFontSize * 0.01
@@ -57,10 +54,9 @@ Item {
     property double overallWidth: vertical ? itemWidth : visualModel.count * itemWidth + (visualModel.count-1) * itemMargin
     property double overallHeight: vertical ? visualModel.count * itemHeight + (visualModel.count-1) * itemMargin : itemHeight
     
-    Layout.maximumWidth:  overallWidth
-    Layout.maximumHeight: overallHeight
-    
-    
+    Layout.preferredWidth:  overallWidth
+    Layout.preferredHeight: overallHeight
+
     FontLoader {
         source: 'plasmapackage:/fonts/fontawesome-webfont-4.3.0.ttf'
     }
