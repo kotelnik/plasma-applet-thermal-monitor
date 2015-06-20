@@ -99,7 +99,6 @@ Item {
         }
     }
     
-    
     GridLayout {
         columns: 2
         
@@ -117,6 +116,13 @@ Item {
         TableView {
             
             headerVisible: false
+            
+            Text {
+                text: i18n('Add resources by clicking "+" button.')
+                color: theme.textColor
+                anchors.centerIn: parent
+                visible: resourcesModel.count === 0
+            }
             
             TableViewColumn {
                 role: 'sourceName'

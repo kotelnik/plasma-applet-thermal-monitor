@@ -72,6 +72,19 @@ Item {
 //         delegate: TemperatureItem {}
 //     }
 
+    Image {
+        id: noResourceIcon;
+
+        anchors.centerIn: parent
+        
+        visible: visualModel.count === 0
+
+        height: itemHeight
+        width: height
+        
+        source: 'plasmapackage:/images/thermal-monitor.svg'
+    }
+
     ListView {
         id: listView
         anchors.fill: parent
