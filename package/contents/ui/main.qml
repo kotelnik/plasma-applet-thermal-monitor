@@ -58,7 +58,7 @@ Item {
     Layout.preferredHeight: overallHeight
 
     FontLoader {
-        source: 'plasmapackage:/fonts/fontawesome-webfont-4.3.0.ttf'
+        source: '../fonts/fontawesome-webfont-4.3.0.ttf'
     }
     
 //     GridView {
@@ -82,7 +82,7 @@ Item {
         height: itemHeight
         width: height
         
-        source: 'plasmapackage:/images/thermal-monitor.svg'
+        source: '../images/thermal-monitor.svg'
     }
 
     ListView {
