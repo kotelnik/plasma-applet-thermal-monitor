@@ -38,8 +38,6 @@ function rebuildModelIndexByKey(existingModel) {
 
 function updateTemperatureModel(existingModel, key, temperature) {
     
-    print('updating model with temperature: ' + temperature + ', key: ' + key + ', i: ' + modelIndexByKey[key])
-    
     var index = modelIndexByKey[key]
     if (index === undefined) {
         print('index not found for key: ' + key)
@@ -77,21 +75,41 @@ function computeVirtuals(existingModel) {
     })
 }
 
-function parseHddtemp(hddtempStr) {
-    var deviceStrings = hddtempStr.split('||')
+var UDISKS_VIRTUAL_PATH_PREFIX = 'udisks/'
+var UDISKS_PATH_START_WITH = '/org/freedesktop/UDisks2/drives/'
+var UDISKS_DEVICES_CMD = 'qdbus --system org.freedesktop.UDisks2 | grep ' + UDISKS_PATH_START_WITH
+var UDISKS_TEMPERATURE_CMD_PATTERN = 'qdbus --system org.freedesktop.UDisks2 {path} org.freedesktop.UDisks2.Drive.Ata.SmartTemperature'
+
+function parseUdisksPaths(udisksPaths) {
+    var deviceStrings = udisksPaths.split('\n')
     var resultObjects = []
     
-    if (deviceStrings.length > 0) {
-        deviceStrings[0] = deviceStrings[0].substring(1)
+    if (deviceStrings) {
+        deviceStrings.forEach(function (path) {
+            if (path) {
+                resultObjects.push({
+                    cmd: UDISKS_TEMPERATURE_CMD_PATTERN.replace('{path}', path),
+                    name: path.substring(UDISKS_PATH_START_WITH.length)
+                })
+            }
+        })
     }
     
-    deviceStrings.forEach(function (deviceStr) {
-        var splitted = deviceStr.split('|')
-        resultObjects.push({
-            sourceName: 'hddtemp-' + splitted[0],
-            temperature: parseFloat(splitted[2])
-        })
-    })
-    
     return resultObjects
+}
+
+function getUdisksTemperatureCmd(diskLabel) {
+    return UDISKS_TEMPERATURE_CMD_PATTERN.replace('{path}', UDISKS_PATH_START_WITH + diskLabel)
+}
+
+function getCelsiaFromUdisksStdout(stdout) {
+    var temperature = parseFloat(stdout)
+    if (temperature <= 0) {
+        return 0
+    }
+    return Math.round(toCelsia(temperature))
+}
+
+function toCelsia(kelvin) {
+    return kelvin - 273.15
 }

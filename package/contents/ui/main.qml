@@ -61,17 +61,6 @@ Item {
         source: '../fonts/fontawesome-webfont-4.3.0.ttf'
     }
     
-//     GridView {
-//         id: listView
-//         anchors.fill: parent
-//         cellWidth: itemWidth
-//         cellHeight: itemHeight
-//         
-//         model: visualModel
-//         
-//         delegate: TemperatureItem {}
-//     }
-
     Image {
         id: noResourceIcon;
 
@@ -136,7 +125,7 @@ Item {
         
         systemmonitorSourcesToAdd.length = 0
         systemmonitorDS.connectedSources.length = 0
-        hddtempDS.connectedSources.length = 0
+        udisksDS.connectedSources.length = 0
         nvidiaDS.connectedSources.length = 0
         
         ModelUtils.initModels(resources, temperatureModel)
@@ -145,7 +134,21 @@ Item {
             var tempObj = temperatureModel.get(i)
             var source = tempObj.sourceName
             
-            if (source.indexOf(systemmonitorDS.lmSensorsStart) === 0 || source.indexOf(systemmonitorDS.acpiStart) === 0) {
+            if (source.indexOf('udisks/') === 0) {
+                
+                var diskLabel = source.substring('udisks/'.length)
+                var cmdSource = ModelUtils.getUdisksTemperatureCmd(diskLabel)
+                tempObj.sourceName = cmdSource
+                
+                print('adding source: ' + cmdSource)
+                
+                udisksDS.connectedSources.push(cmdSource)
+                
+            } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
+                
+                nvidiaDS.connectedSources.push(nvidiaDS.nvidiaSource)
+                
+            } else {
                 
                 print('adding source: ' + source)
                 
@@ -157,18 +160,10 @@ Item {
                     systemmonitorSourcesToAdd.push(source)
                 }
                 
-            } else if (source.indexOf('hddtemp-') === 0 && hddtempDS.connectedSources.length === 0) {
-                
-                print('adding source: ' + hddtempDS.netcatSource)
-                
-                hddtempDS.connectedSources.push(hddtempDS.netcatSource)
-                
-            } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
-                
-                nvidiaDS.connectedSources.push(nvidiaDS.nvidiaSource)
-                
             }
         }
+        
+        ModelUtils.rebuildModelIndexByKey(temperatureModel)
     }
     
     PlasmaCore.DataSource {
@@ -197,17 +192,18 @@ Item {
             if (data.value === undefined) {
                 return
             }
-            print('New data incomming. Source: ' + sourceName + ', data: ' + data.value);
             ModelUtils.updateTemperatureModel(temperatureModel, sourceName, parseFloat(data.value))
         }
         interval: updateInterval
     }
     
     PlasmaCore.DataSource {
-        id: hddtempDS
+        id: udisksDS
         engine: "executable"
         
-        property string netcatSource: 'netcat localhost 7634'
+        // qdbus --system org.freedesktop.UDisks2 | grep /org/freedesktop/UDisks2/drives/
+        // qdbus --system org.freedesktop.UDisks2 /org/freedesktop/UDisks2/drives/Samsung_SSD_840_EVO_250GB_S1DBNSAFB24967W org.freedesktop.UDisks2.Drive.Ata.SmartTemperature
+        //   - returns kelvin, so °C = kelvin - 273.15
 
         connectedSources: []
         
@@ -215,11 +211,8 @@ Item {
             if (data['exit code'] > 0) {
                 return
             }
-            print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
-            var hddtempObjects = ModelUtils.parseHddtemp(data.stdout)
-            hddtempObjects.forEach(function (hddtempObj) {
-                ModelUtils.updateTemperatureModel(temperatureModel, hddtempObj.sourceName, hddtempObj.temperature)
-            })
+            var temperature = ModelUtils.getCelsiaFromUdisksStdout(data.stdout)
+            ModelUtils.updateTemperatureModel(temperatureModel, sourceName, temperature)
             
             //ModelUtils.computeVirtuals(temperatureModel)
         }

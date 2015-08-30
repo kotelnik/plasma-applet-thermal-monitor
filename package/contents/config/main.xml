@@ -37,7 +37,7 @@
     
     <group name="Misc">
         <entry name="updateInterval" type="Double">
-            <default>5.0</default>
+            <default>3.0</default>
         </entry>
         <entry name="fahrenheitEnabled" type="Bool">
             <default>false</default>

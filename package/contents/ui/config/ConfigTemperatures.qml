@@ -3,22 +3,27 @@ import QtQuick.Controls 1.3
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.0
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
 import "../../code/config-utils.js" as ConfigUtils
 import "../../code/model-utils.js" as ModelUtils
 
 Item {
     id: resourcesConfigPage
     
-    property double tableWidth: 500
+    property double tableWidth: 550
 
     property string cfg_resources
     property alias cfg_warningTemperature: warningTemperatureSpinBox.value
     property alias cfg_meltdownTemperature: meltdownTemperatureSpinBox.value
     
-    property var comboboxModel: []
+    property var preparedSystemMonitorSources: []
     
     ListModel {
         id: resourcesModel
+    }
+    
+    ListModel {
+        id: comboboxModel
     }
     
     Component.onCompleted: {
@@ -26,9 +31,15 @@ Item {
         print('sources: ' + systemmonitorDS.sources.length)
         
         systemmonitorDS.sources.forEach(function (source) {
-            if (source.indexOf('lmsensors/') === 0 || source.indexOf('acpi/Thermal_Zone/') === 0) {
-                comboboxModel.push(source)
-                print('added to combo model: ' + source)
+            
+            if ((source.indexOf('lmsensors/') === 0 || source.indexOf('acpi/Thermal_Zone/') === 0)
+                && !source.match(/\/fan[0-9]*$/) ) {
+                
+                comboboxModel.append({
+                    text: source,
+                    val: source
+                })
+                print('source to combo: ' + source)
             }
         })
         
@@ -71,7 +82,7 @@ Item {
                     id: sourceCombo
                     Layout.preferredWidth: addResourceDialog.width
                     Layout.preferredHeight: addResourceDialog.fieldHeight
-                    model: comboboxModel
+                    model: ListModel {}
                 }
                 
                 TextField {
@@ -87,8 +98,13 @@ Item {
                     Layout.preferredHeight: addResourceDialog.fieldHeight
                     onClicked: {
                         
+                        if (!aliasTextfield.text) {
+                            aliasTextfield.text = 'Insert alias'
+                            return
+                        }
+                        
                         resourcesModel.append({
-                            sourceName: sourceCombo.currentText,
+                            sourceName: comboboxModel.get(sourceCombo.currentIndex).val,
                             alias: aliasTextfield.text
                         })
                         resourcesModelChanged()
@@ -115,7 +131,7 @@ Item {
         
         TableView {
             
-            headerVisible: false
+            headerVisible: true
             
             Text {
                 text: i18n('Add resources by clicking "+" button.')
@@ -127,13 +143,13 @@ Item {
             TableViewColumn {
                 role: 'sourceName'
                 title: 'Source'
-                width: tableWidth * 0.5
+                width: tableWidth * 0.6
             }
             
             TableViewColumn {
                 role: 'alias'
                 title: 'Alias'
-                width: tableWidth * 0.2
+                width: tableWidth * 0.1
             }
             
             TableViewColumn {
@@ -184,12 +200,28 @@ Item {
             Layout.columnSpan: 2
         }
         Button {
+            id: buttonAddResource
             iconName: 'list-add'
             Layout.preferredWidth: 100
             Layout.columnSpan: 2
             onClicked: {
                 addResourceDialog.open()
                 aliasTextfield.text = ''
+                
+                // remove already selected sources
+                for (var i = 0; i < resourcesModel.count; i++) {
+                    var obj = resourcesModel.get(i)
+                    var sourceToRemove = obj.sourceName
+                    for (var j = 0; j < comboboxModel.count; j++) {
+                        var comboItem = comboboxModel.get(j)
+                        if (comboItem.text === sourceToRemove) {
+                            comboboxModel.remove(j)
+                            break
+                        }
+                    }
+                }
+                
+                // set combobox model
                 sourceCombo.model = comboboxModel
             }
         }
@@ -237,56 +269,66 @@ Item {
         
     }
     
-    
     PlasmaCore.DataSource {
         id: systemmonitorDS
         engine: "systemmonitor"
     }
     
     PlasmaCore.DataSource {
-        id: hddtempDS
-        engine: "executable"
+        id: udisksDS
+        engine: 'executable'
         
-        connectedSources: [ 'netcat localhost 7634' ]
+        connectedSources: [ ModelUtils.UDISKS_DEVICES_CMD ]
         
         onNewData: {
-            hddtempDS.connectedSources.length = 0
+            connectedSources.length = 0
             
             if (data['exit code'] > 0) {
+                print('New data incomming. Source: ' + sourceName + ', ERROR: ' + data.stderr);
                 return
             }
             
             print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
-            var hddtempObjects = ModelUtils.parseHddtemp(data.stdout)
-            hddtempObjects.forEach(function (hddtempObj) {
-                var source = hddtempObj.sourceName
-                if (comboboxModel.indexOf(source) > -1 || isNaN(hddtempObj.temperature)) {
-                    return
-                }
-                comboboxModel.push(source)
-                print('added to combo model: ' + source)
+            
+            var pathsToCheck = ModelUtils.parseUdisksPaths(data.stdout)
+            pathsToCheck.forEach(function (pathObj) {
+                var cmd = ModelUtils.UDISKS_VIRTUAL_PATH_PREFIX + pathObj.name
+                comboboxModel.append({
+                    text: cmd,
+                    val: cmd
+                })
             })
             
         }
-        interval: 1000
+        
+        interval: 500
     }
     
     PlasmaCore.DataSource {
         id: nvidiaDS
-        engine: "executable"
+        engine: 'executable'
         
         connectedSources: [ 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader' ]
+        
+        property bool prepared: false
         
         onNewData: {
             nvidiaDS.connectedSources.length = 0
             
             if (data['exit code'] > 0) {
+                prepared = true
                 return
             }
             
-            comboboxModel.push('nvidia-smi')
+            comboboxModel.append({
+                text: 'nvidia-smi',
+                val: 'nvidia-smi'
+            })
+            
+            prepared = true
         }
-        interval: 1000
+        
+        interval: 500
     }
     
 }
