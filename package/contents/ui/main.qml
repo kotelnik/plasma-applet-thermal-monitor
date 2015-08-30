@@ -168,7 +168,7 @@ Item {
     
     PlasmaCore.DataSource {
         id: systemmonitorDS
-        engine: "systemmonitor"
+        engine: 'systemmonitor'
 
         property string lmSensorsStart: 'lmsensors/'
         property string acpiStart: 'acpi/Thermal_Zone/'
@@ -176,16 +176,18 @@ Item {
         connectedSources: []
         
         onSourceAdded: {
-            print('source added: ' + source)
+            
             if (source.indexOf(lmSensorsStart) === 0 || source.indexOf(acpiStart) === 0) {
-                print('  adding to available')
+                
                 systemmonitorAvailableSources.push(source)
                 var staIndex = systemmonitorSourcesToAdd.indexOf(source)
                 if (staIndex > -1) {
                     systemmonitorDS.connectedSources.push(source)
                     systemmonitorSourcesToAdd.splice(staIndex, 1)
                 }
+                
             }
+            
         }
 
         onNewData: {
@@ -199,29 +201,24 @@ Item {
     
     PlasmaCore.DataSource {
         id: udisksDS
-        engine: "executable"
+        engine: 'executable'
         
-        // qdbus --system org.freedesktop.UDisks2 | grep /org/freedesktop/UDisks2/drives/
-        // qdbus --system org.freedesktop.UDisks2 /org/freedesktop/UDisks2/drives/Samsung_SSD_840_EVO_250GB_S1DBNSAFB24967W org.freedesktop.UDisks2.Drive.Ata.SmartTemperature
-        //   - returns kelvin, so °C = kelvin - 273.15
-
         connectedSources: []
         
         onNewData: {
             if (data['exit code'] > 0) {
                 return
             }
+            
             var temperature = ModelUtils.getCelsiaFromUdisksStdout(data.stdout)
             ModelUtils.updateTemperatureModel(temperatureModel, sourceName, temperature)
-            
-            //ModelUtils.computeVirtuals(temperatureModel)
         }
         interval: updateInterval
     }
     
     PlasmaCore.DataSource {
         id: nvidiaDS
-        engine: "executable"
+        engine: 'executable'
         
         property string nvidiaSource: 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader'
 
@@ -231,7 +228,7 @@ Item {
             if (data['exit code'] > 0) {
                 return
             }
-            print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
+            
             ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', parseFloat(data.stdout))
         }
         interval: updateInterval

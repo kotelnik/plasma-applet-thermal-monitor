@@ -1,9 +1,8 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.3
 import QtQuick.Dialogs 1.2
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.1
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
 import "../../code/config-utils.js" as ConfigUtils
 import "../../code/model-utils.js" as ModelUtils
 
@@ -27,8 +26,6 @@ Item {
     }
     
     Component.onCompleted: {
-        
-        print('sources: ' + systemmonitorDS.sources.length)
         
         systemmonitorDS.sources.forEach(function (source) {
             
@@ -271,7 +268,7 @@ Item {
     
     PlasmaCore.DataSource {
         id: systemmonitorDS
-        engine: "systemmonitor"
+        engine: 'systemmonitor'
     }
     
     PlasmaCore.DataSource {
