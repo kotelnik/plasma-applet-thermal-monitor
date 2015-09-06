@@ -104,6 +104,7 @@ Item {
     
     Component.onCompleted: {
         reloadAllSources()
+        plasmoid.setAction('reloadSources', i18n('Reload Temperature Sources'), 'system-reboot');
     }
     
     onConfiguredResourcesChanged: {
@@ -112,6 +113,10 @@ Item {
     
     onVerticalChanged: {
         refreshView()
+    }
+    
+    function action_reloadSources() {
+        reloadAllSources()
     }
     
     function reloadAllSources() {
