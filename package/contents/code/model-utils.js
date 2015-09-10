@@ -44,7 +44,9 @@ function updateTemperatureModel(existingModel, key, temperature) {
         return
     }
     
-    existingModel.setProperty(modelIndexByKey[key], 'temperature', temperature)
+    print('setting property temperature to ' + temperature + ', key=' + key + ', index=' + index)
+    
+    existingModel.setProperty(index, 'temperature', temperature)
 }
 
 function initModels(savedSourceObjects, temperatureModel) {

@@ -29,7 +29,7 @@ Item {
     
     // configuration
     property bool fahrenheitEnabled: plasmoid.configuration.fahrenheitEnabled
-    property var configuredResources: plasmoid.configuration.resources
+    property string configuredResources: plasmoid.configuration.resources
     property int updateInterval: 1000 * plasmoid.configuration.updateInterval
     
     property int itemMargin: 5
@@ -56,7 +56,11 @@ Item {
     
     Layout.preferredWidth:  overallWidth
     Layout.preferredHeight: overallHeight
-
+    
+    function dbgprint(msg) {
+        print('[thermalMonitor] ' + msg)
+    }
+    
     FontLoader {
         source: '../fonts/fontawesome-webfont-4.3.0.ttf'
     }
@@ -103,16 +107,17 @@ Item {
     }
     
     Component.onCompleted: {
-        reloadAllSources()
         plasmoid.setAction('reloadSources', i18n('Reload Temperature Sources'), 'system-reboot');
+        
+        dbgprint('onCompleted() END ... properties of udisksDS')
+        for (var key in udisksDS) {
+            dbgprint(key + ' -> ' + udisksDS[key])
+        }
     }
     
     onConfiguredResourcesChanged: {
+        dbgprint('configured resources changed')
         reloadAllSources()
-    }
-    
-    onVerticalChanged: {
-        refreshView()
     }
     
     function action_reloadSources() {
@@ -120,6 +125,12 @@ Item {
     }
     
     function reloadAllSources() {
+        
+        dbgprint('reloadAllSources() ... properties of udisksDS')
+        for (var key in udisksDS) {
+            dbgprint(key + ' -> ' + udisksDS[key])
+        }
+        
         var resources = ConfigUtils.getResourcesObjectArray()
         
         temperatureModel.clear()
@@ -145,7 +156,7 @@ Item {
                 var cmdSource = ModelUtils.getUdisksTemperatureCmd(diskLabel)
                 tempObj.sourceName = cmdSource
                 
-                print('adding source: ' + cmdSource)
+                dbgprint('adding source: ' + cmdSource)
                 
                 udisksDS.connectedSources.push(cmdSource)
                 
@@ -155,13 +166,13 @@ Item {
                 
             } else {
                 
-                print('adding source: ' + source)
+                dbgprint('adding source: ' + source)
                 
                 if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
-                    print('adding to connected')
+                    dbgprint('adding to connected')
                     systemmonitorDS.connectedSources.push(source)
                 } else {
-                    print('adding to sta')
+                    dbgprint('adding to sta')
                     systemmonitorSourcesToAdd.push(source)
                 }
                 
@@ -169,6 +180,11 @@ Item {
         }
         
         ModelUtils.rebuildModelIndexByKey(temperatureModel)
+        
+        dbgprint('reloadAllSources()DONE ... properties of udisksDS')
+        for (var key in udisksDS) {
+            dbgprint(key + ' -> ' + udisksDS[key])
+        }
     }
     
     PlasmaCore.DataSource {
@@ -211,7 +227,11 @@ Item {
         connectedSources: []
         
         onNewData: {
+            
+            dbgprint('udisks new data - valid: ' + valid + ', stdout: ' + data.stdout)
+            
             if (data['exit code'] > 0) {
+                dbgprint('new data error: ' + data.stderr)
                 return
             }
             

@@ -3,7 +3,7 @@ function toFahrenheit(celsia) {
 }
 
 function getTemperature(celsiaDouble, fahrenheitEnabled) {
-    print('getTemperature: ' + celsiaDouble)
+    dbgprint('getTemperature: ' + celsiaDouble)
     var fl = celsiaDouble
     if (fahrenheitEnabled) {
         fl = toFahrenheit(fl)
