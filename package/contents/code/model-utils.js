@@ -1,5 +1,6 @@
 // mapping table for optimalization
 var modelIndexBySourceName = {}
+var virtualObjectMapByIndex = []
 
 /*
 var exampleObject1 = {
@@ -58,7 +59,15 @@ function rebuildModelIndexByKey(existingModel) {
     modelIndexBySourceName = {}
     for (var i = 0; i < existingModel.count; i++) {
         var obj = existingModel.get(i)
-        modelIndexBySourceName[obj.sourceName] = i
+        if (obj.virtual) {
+            for (var key in obj.childSourceObjects) {
+                print('indexing virtual: ' + key + ' with index ' + i)
+                modelIndexBySourceName[key] = i
+            }
+        } else {
+            print('indexing: ' + obj.sourceName + ' with index ' + i)
+            modelIndexBySourceName[obj.sourceName] = i
+        }
     }
 }
 
@@ -66,6 +75,8 @@ function rebuildModelIndexByKey(existingModel) {
  * Sets temperature to existing temperatureModel -> triggers virtual temperature computation and visual update.
  */
 function updateTemperatureModel(existingModel, sourceName, temperature) {
+    
+    //TODO what if some sources are added more then once?
     
     var index = modelIndexBySourceName[sourceName]
     if (index === undefined) {
@@ -81,19 +92,17 @@ function updateTemperatureModel(existingModel, sourceName, temperature) {
         
         print('setting partial virtual temperature: ' + temperature)
         
-        var childSourceObjects = currentObj.childSourceObjects
-        var lastChildSourceObjectsSize = childSourceObjects.length
-        
-        // update single temperature in child temperatures
-        childSourceObjects[sourceName] = temperature
-        
-        //TODO when tested enough -> remove this check
-        if (lastChildSourceObjectsSize < childSourceObjects.length) {
-            print('thermalMonitor ERROR: child source object size got bigger by setting partial virtual temperature!!')
+        var cachedObject = virtualObjectMapByIndex[index] || {}
+        virtualObjectMapByIndex[index] = cachedObject
+        cachedObject[sourceName] = {
+            temperature: temperature
         }
+        //TODO when tested enough -> remove this check
+//         if (lastChildSourceObjectsSize < childSourceObjects.length) {
+//             print('thermalMonitor ERROR: child source object size got bigger by setting partial virtual temperature!!')
+//         }
         
-        // get highest temperature from children temperatures
-        temperatureToSet = getHighestFromVirtuals(childSourceObjects)
+        return
     }
     
     print('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
@@ -102,10 +111,23 @@ function updateTemperatureModel(existingModel, sourceName, temperature) {
     existingModel.setProperty(index, 'temperature', temperatureToSet)
 }
 
+function computeVirtuals(existingModel) {
+    for (var index in virtualObjectMapByIndex) {
+        var cachedObject = virtualObjectMapByIndex[index]
+        var temperatureToSet = getHighestFromVirtuals(cachedObject)
+        var modelObj = existingModel.get(index)
+        print('setting property temperature to ' + temperatureToSet + ', group alias=' + modelObj.alias)
+        
+        // update model
+        existingModel.setProperty(index, 'temperature', temperatureToSet)
+    }
+}
+
 function getHighestFromVirtuals(childSourceObjects) {
     var maxTemperature = 0
-    for (var sourceName in virtualObj.childSourceObjects) {
-        var newTemperture = virtualObj.childSourceObjects[sourceName].temperature
+    for (var sourceName in childSourceObjects) {
+        var newTemperture = childSourceObjects[sourceName].temperature
+        print('iterating over virtual: ' + sourceName + ', temp: ' + newTemperture)
         if (newTemperture > maxTemperature) {
             maxTemperature = newTemperture
         } 

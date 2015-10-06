@@ -135,6 +135,7 @@ Item {
         systemmonitorSourcesToAdd.length = 0
         systemmonitorDS.connectedSources.length = 0
         udisksDS.connectedSources.length = 0
+        udisksDS.cmdSourceBySourceName = {}
         nvidiaDS.connectedSources.length = 0
         
         ModelUtils.initModels(resources, temperatureModel)
@@ -147,41 +148,17 @@ Item {
                 
                 dbgprint('adding group: ' + tempObj.alias)
                 
-                for (var key in tempObj.childSourceObjects) {
+                for (var childSource in tempObj.childSourceObjects) {
                     
-                    var cmdSource = ModelUtils.getUdisksTemperatureCmd(key)
+                    dbgprint('adding source (for group): ' + childSource)
                     
-                    dbgprint('adding source (for group): ' + cmdSource)
-                
-                    udisksDS.connectedSources.push(cmdSource)
+                    addSourceToDs(childSource)
                     
                 }
-                
-            } else if (source.indexOf('udisks/') === 0) {
-                
-                var diskLabel = source.substring('udisks/'.length)
-                var cmdSource = ModelUtils.getUdisksTemperatureCmd(diskLabel)
-                tempObj.sourceName = cmdSource
-                
-                dbgprint('adding source: ' + cmdSource)
-                
-                udisksDS.connectedSources.push(cmdSource)
-                
-            } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
-                
-                nvidiaDS.connectedSources.push(nvidiaDS.nvidiaSource)
                 
             } else {
                 
-                dbgprint('adding source: ' + source)
-                
-                if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
-                    dbgprint('adding to connected')
-                    systemmonitorDS.connectedSources.push(source)
-                } else {
-                    dbgprint('adding to sta')
-                    systemmonitorSourcesToAdd.push(source)
-                }
+                addSourceToDs(source)
                 
             }
         }
@@ -192,6 +169,38 @@ Item {
         for (var key in udisksDS) {
             dbgprint(key + ' -> ' + udisksDS[key])
         }
+    }
+    
+    function addSourceToDs(source) {
+        
+        if (source.indexOf('udisks/') === 0) {
+            
+            var diskLabel = source.substring('udisks/'.length)
+            var cmdSource = ModelUtils.getUdisksTemperatureCmd(diskLabel)
+            udisksDS.cmdSourceBySourceName[cmdSource] = source
+            
+            dbgprint('adding source: ' + cmdSource)
+            
+            udisksDS.connectedSources.push(cmdSource)
+            
+        } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
+            
+            nvidiaDS.connectedSources.push(nvidiaDS.nvidiaSource)
+            
+        } else {
+            
+            dbgprint('adding source: ' + source)
+            
+            if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
+                dbgprint('adding to connected')
+                systemmonitorDS.connectedSources.push(source)
+            } else {
+                dbgprint('adding to sta')
+                systemmonitorSourcesToAdd.push(source)
+            }
+            
+        }
+        
     }
     
     PlasmaCore.DataSource {
@@ -231,6 +240,8 @@ Item {
         id: udisksDS
         engine: 'executable'
         
+        property variant cmdSourceBySourceName: {}
+        
         connectedSources: []
         
         onNewData: {
@@ -243,7 +254,7 @@ Item {
             }
             
             var temperature = ModelUtils.getCelsiaFromUdisksStdout(data.stdout)
-            ModelUtils.updateTemperatureModel(temperatureModel, sourceName, temperature)
+            ModelUtils.updateTemperatureModel(temperatureModel, cmdSourceBySourceName[sourceName], temperature)
         }
         interval: updateInterval
     }
@@ -264,6 +275,15 @@ Item {
             ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', parseFloat(data.stdout))
         }
         interval: updateInterval
+    }
+    
+    Timer {
+        interval: updateInterval
+        repeat: true
+        running: true
+        onTriggered: {
+            ModelUtils.computeVirtuals(temperatureModel)
+        }
     }
     
 }

@@ -23,6 +23,11 @@ Item {
     
     ListModel {
         id: comboboxModel
+        
+        ListElement {
+            text: 'Virtual Group'
+            val: 'group'
+        }
     }
     
     ListModel {
@@ -31,7 +36,19 @@ Item {
     
     Component.onCompleted: {
         
-        reloadComboboxModel()
+        systemmonitorDS.sources.forEach(function (source) {
+            
+            if ((source.indexOf('lmsensors/') === 0 || source.indexOf('acpi/Thermal_Zone/') === 0)
+                && !source.match(/\/fan[0-9]*$/) ) {
+                
+                comboboxModel.append({
+                    text: source,
+                    val: source
+                })
+                
+                print('source to combo: ' + source)
+            }
+        })
         
         var resources = ConfigUtils.getResourcesObjectArray()
         resources.forEach(function (resourceObj) {
@@ -45,43 +62,29 @@ Item {
         var childSourceObjects = temperatureObj.childSourceObjects || {}
         var childSourceObjectsEmpty = !temperatureObj.childSourceObjects
         
-        comboboxModel.clear()
         checkboxesSourcesModel.clear()
+        sourceCombo.currentIndex = 0
         
-        comboboxModel.append({
-            text: 'Virtual Group',
-            val: 'group'
-        })
+        print('sourceName to select: ' + temperatureObj.sourceName)
         
-        var selectedIndex = 0
-        
-        var i = 0
-        systemmonitorDS.sources.forEach(function (source) {
+        for (var i = 0; i < comboboxModel.count; i++) {
+            var source = comboboxModel.get(i).val
             
-            if ((source.indexOf('lmsensors/') === 0 || source.indexOf('acpi/Thermal_Zone/') === 0)
-                && !source.match(/\/fan[0-9]*$/) ) {
-                
-                comboboxModel.append({
-                    text: source,
-                    val: source
-                })
-                print('source to combo: ' + source + ', checked: ' + (source in childSourceObjects))
-                
-                i++
-                if (comboboxModel.get(i).val === temperatureObj.sourceName) {
-                    selectedIndex = i
-                }
-                
-                checkboxesSourcesModel.append({
-                    text: source,
-                    val: source,
-                    checkboxChecked: childSourceObjectsEmpty || (source in childSourceObjects)
-                })
+            if (source === temperatureObj.sourceName) {
+                sourceCombo.currentIndex = i
             }
-        })
+            
+            if (source === 'group') {
+                continue
+            }
+            
+            checkboxesSourcesModel.append({
+                text: source,
+                val: source,
+                checkboxChecked: childSourceObjectsEmpty || (source in childSourceObjects)
+            })
+        }
         
-        // select
-        sourceCombo.currentIndex = selectedIndex
     }
     
     function resourcesModelChanged() {
@@ -105,7 +108,11 @@ Item {
     
     Dialog {
         id: addResourceDialog
-        title: 'Add Resource'
+        
+        property bool addResource: true
+        property int editResourceIndex: -1
+        
+        title: addResource ? 'Add Resource' : 'Edit Resource'
         
         width: tableWidth
         
@@ -133,7 +140,7 @@ Item {
                 }
             }
             
-            resourcesModel.append({
+            var newObject = {
                 sourceName: comboboxModel.get(sourceCombo.currentIndex).val,
                 alias: aliasTextfield.text,
                 overrideLimitTemperatures: overrideLimitTemperatures.checked,
@@ -141,7 +148,14 @@ Item {
                 meltdownTemperature: meltdownTemperatureItem.value,
                 virtual: virtualSelected,
                 childSourceObjects: childSourceObjects
-            })
+            }
+            
+            if (addResourceDialog.addResource) {
+                resourcesModel.append(newObject)
+            } else {
+                resourcesModel.set(addResourceDialog.editResourceIndex, newObject)
+            }
+            
             
             resourcesModelChanged()
             addResourceDialog.close()
@@ -232,7 +246,11 @@ Item {
         }
     }
     
-    function fillAddResourceDialogAndOpen(temperatureObj) {
+    function fillAddResourceDialogAndOpen(temperatureObj, editResourceIndex) {
+        
+        // set dialog title
+        addResourceDialog.addResource = temperatureObj === null
+        addResourceDialog.editResourceIndex = editResourceIndex
         
         temperatureObj = temperatureObj || {
             alias: '',
@@ -296,7 +314,7 @@ Item {
                     }
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        fillAddResourceDialogAndOpen(resourcesModel.get(styleData.row))
+                        fillAddResourceDialogAndOpen(resourcesModel.get(styleData.row), styleData.row)
                     }
                 }
             }
@@ -314,7 +332,7 @@ Item {
                     }
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        fillAddResourceDialogAndOpen(resourcesModel.get(styleData.row))
+                        fillAddResourceDialogAndOpen(resourcesModel.get(styleData.row), styleData.row)
                     }
                 }
             }
@@ -372,7 +390,7 @@ Item {
             Layout.preferredWidth: 100
             Layout.columnSpan: 2
             onClicked: {
-                fillAddResourceDialogAndOpen()
+                fillAddResourceDialogAndOpen(null, -1)
             }
         }
         
