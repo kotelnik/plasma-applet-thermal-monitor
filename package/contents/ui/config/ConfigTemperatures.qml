@@ -25,8 +25,37 @@ Item {
         id: comboboxModel
     }
     
+    ListModel {
+        id: checkboxesSourcesModel
+    }
+    
     Component.onCompleted: {
         
+        reloadComboboxModel()
+        
+        var resources = ConfigUtils.getResourcesObjectArray()
+        resources.forEach(function (resourceObj) {
+            resourcesModel.append(resourceObj)
+        })
+    }
+    
+    function reloadComboboxModel(temperatureObj) {
+        
+        temperatureObj = temperatureObj || {}
+        var childSourceObjects = temperatureObj.childSourceObjects || {}
+        var childSourceObjectsEmpty = !temperatureObj.childSourceObjects
+        
+        comboboxModel.clear()
+        checkboxesSourcesModel.clear()
+        
+        comboboxModel.append({
+            text: 'Virtual Group',
+            val: 'group'
+        })
+        
+        var selectedIndex = 0
+        
+        var i = 0
         systemmonitorDS.sources.forEach(function (source) {
             
             if ((source.indexOf('lmsensors/') === 0 || source.indexOf('acpi/Thermal_Zone/') === 0)
@@ -36,14 +65,23 @@ Item {
                     text: source,
                     val: source
                 })
-                print('source to combo: ' + source)
+                print('source to combo: ' + source + ', checked: ' + (source in childSourceObjects))
+                
+                i++
+                if (comboboxModel.get(i).val === temperatureObj.sourceName) {
+                    selectedIndex = i
+                }
+                
+                checkboxesSourcesModel.append({
+                    text: source,
+                    val: source,
+                    checkboxChecked: childSourceObjectsEmpty || (source in childSourceObjects)
+                })
             }
         })
         
-        var resources = ConfigUtils.getResourcesObjectArray()
-        resources.forEach(function (resourceObj) {
-            resourcesModel.append(resourceObj)
-        })
+        // select
+        sourceCombo.currentIndex = selectedIndex
     }
     
     function resourcesModelChanged() {
@@ -52,7 +90,12 @@ Item {
             var obj = resourcesModel.get(i)
             newResourcesArray.push({
                 sourceName: obj.sourceName,
-                alias: obj.alias
+                alias: obj.alias,
+                overrideLimitTemperatures: obj.overrideLimitTemperatures,
+                warningTemperature: obj.warningTemperature,
+                meltdownTemperature: obj.meltdownTemperature,
+                virtual: obj.virtual,
+                childSourceObjects: obj.childSourceObjects
             })
         }
         cfg_resources = JSON.stringify(newResourcesArray)
@@ -62,54 +105,156 @@ Item {
     
     Dialog {
         id: addResourceDialog
-        title: "Add Resource"
+        title: 'Add Resource'
         
         width: tableWidth
-        height: 150
         
         property int tableIndex: 0
-        property double fieldHeight: addResourceDialog.height / 3 - 3
+        property double fieldHeight: addResourceDialog.height / 5 - 3
         
-        contentItem: Item {
+        property bool virtualSelected: true
+        
+        standardButtons: StandardButton.Ok | StandardButton.Cancel
+        
+        onAccepted: {
+            if (!aliasTextfield.text) {
+                aliasTextfield.text = '_'
+                return
+            }
             
-            GridLayout {
-                columns: 1
-                
-                ComboBox {
-                    id: sourceCombo
-                    Layout.preferredWidth: addResourceDialog.width
-                    Layout.preferredHeight: addResourceDialog.fieldHeight
-                    model: ListModel {}
-                }
-                
-                TextField {
-                    id: aliasTextfield
-                    placeholderText: 'Alias'
-                    Layout.preferredWidth: addResourceDialog.width
-                    Layout.preferredHeight: addResourceDialog.fieldHeight
-                }
-                
-                Button {
-                    text: 'Add'
-                    width: addResourceDialog.width
-                    Layout.preferredHeight: addResourceDialog.fieldHeight
-                    onClicked: {
-                        
-                        if (!aliasTextfield.text) {
-                            aliasTextfield.text = 'Insert alias'
-                            return
-                        }
-                        
-                        resourcesModel.append({
-                            sourceName: comboboxModel.get(sourceCombo.currentIndex).val,
-                            alias: aliasTextfield.text
-                        })
-                        resourcesModelChanged()
-                        addResourceDialog.close()
+            var childSourceObjects = {}
+            for (var i = 0; i < checkboxesSourcesModel.count; i++) {
+                if (checkboxesSourcesListView.children[0].children[i].checked === true) {
+                    var sourceName = checkboxesSourcesModel.get(i).val
+                    print ('adding source to group: ' + sourceName)
+                    childSourceObjects[checkboxesSourcesModel.get(i).val] = {
+                        temperature: 0
                     }
                 }
             }
+            
+            resourcesModel.append({
+                sourceName: comboboxModel.get(sourceCombo.currentIndex).val,
+                alias: aliasTextfield.text,
+                overrideLimitTemperatures: overrideLimitTemperatures.checked,
+                warningTemperature: warningTemperatureItem.value,
+                meltdownTemperature: meltdownTemperatureItem.value,
+                virtual: virtualSelected,
+                childSourceObjects: childSourceObjects
+            })
+            
+            resourcesModelChanged()
+            addResourceDialog.close()
         }
+        
+        GridLayout {
+            columns: 2
+            
+            Label {
+                text: i18n('Source:')
+                Layout.alignment: Qt.AlignRight
+            }
+            ComboBox {
+                id: sourceCombo
+                Layout.preferredWidth: tableWidth/2
+                model: comboboxModel
+                onCurrentIndexChanged: {
+                    addResourceDialog.virtualSelected = comboboxModel.get(currentIndex).val === 'group'
+                }
+            }
+            
+            Label {
+                text: i18n('Child sources:')
+                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+            }
+            ListView {
+                id: checkboxesSourcesListView
+                model: checkboxesSourcesModel
+                delegate: CheckBox {
+                    text: val
+                    checked: checkboxChecked
+                }
+                enabled: addResourceDialog.virtualSelected
+                Layout.preferredWidth: tableWidth/2
+                Layout.preferredHeight: (theme.defaultFont.pointSize * 2) * checkboxesSourcesModel.count + 5
+            }
+            
+            Item {
+                Layout.columnSpan: 2
+                width: 2
+                height: 10
+            }
+            
+            Label {
+                text: i18n('Alias:')
+                Layout.alignment: Qt.AlignRight
+            }
+            TextField {
+                id: aliasTextfield
+                Layout.preferredWidth: tableWidth/2
+            }
+            
+            Item {
+                Layout.columnSpan: 2
+                width: 2
+                height: 10
+            }
+            
+            CheckBox {
+                id: overrideLimitTemperatures
+                text: i18n("Override limit temperatures")
+                Layout.columnSpan: 2
+                checked: false
+            }
+            
+            Label {
+                text: i18n('Warning temperature:')
+                Layout.alignment: Qt.AlignRight
+            }
+            SpinBox {
+                id: warningTemperatureItem
+                stepSize: 10
+                minimumValue: 10
+                enabled: overrideLimitTemperatures.checked
+            }
+            
+            Label {
+                text: i18n('Meltdown temperature:')
+                Layout.alignment: Qt.AlignRight
+            }
+            SpinBox {
+                id: meltdownTemperatureItem
+                stepSize: 10
+                minimumValue: 10
+                enabled: overrideLimitTemperatures.checked
+            }
+            
+        }
+    }
+    
+    function fillAddResourceDialogAndOpen(temperatureObj) {
+        
+        temperatureObj = temperatureObj || {
+            alias: '',
+            overrideLimitTemperatures: false,
+            meltdownTemperature: 10,
+            warningTemperature: 10
+        }
+        
+        // set combobox
+        reloadComboboxModel(temperatureObj)
+        
+        // alias
+        aliasTextfield.text = temperatureObj.alias
+        
+        // temperature overrides
+        overrideLimitTemperatures.checked = temperatureObj.overrideLimitTemperatures
+        warningTemperatureItem.value = temperatureObj.warningTemperature
+        meltdownTemperatureItem.value = temperatureObj.meltdownTemperature
+        
+        // open dialog
+        addResourceDialog.open()
+        
     }
     
     GridLayout {
@@ -141,12 +286,37 @@ Item {
                 role: 'sourceName'
                 title: 'Source'
                 width: tableWidth * 0.6
+                delegate: MouseArea {
+                    anchors.fill: parent
+                    Text {
+                        text: styleData.value
+                        color: theme.textColor
+                        anchors.fill: parent
+                        elide: Text.ElideRight
+                    }
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        fillAddResourceDialogAndOpen(resourcesModel.get(styleData.row))
+                    }
+                }
             }
             
             TableViewColumn {
                 role: 'alias'
                 title: 'Alias'
                 width: tableWidth * 0.1
+                delegate: MouseArea {
+                    anchors.fill: parent
+                    Text {
+                        text: styleData.value
+                        color: theme.textColor
+                        anchors.fill: parent
+                    }
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        fillAddResourceDialogAndOpen(resourcesModel.get(styleData.row))
+                    }
+                }
             }
             
             TableViewColumn {
@@ -202,24 +372,7 @@ Item {
             Layout.preferredWidth: 100
             Layout.columnSpan: 2
             onClicked: {
-                addResourceDialog.open()
-                aliasTextfield.text = ''
-                
-                // remove already selected sources
-                for (var i = 0; i < resourcesModel.count; i++) {
-                    var obj = resourcesModel.get(i)
-                    var sourceToRemove = obj.sourceName
-                    for (var j = 0; j < comboboxModel.count; j++) {
-                        var comboItem = comboboxModel.get(j)
-                        if (comboItem.text === sourceToRemove) {
-                            comboboxModel.remove(j)
-                            break
-                        }
-                    }
-                }
-                
-                // set combobox model
-                sourceCombo.model = comboboxModel
+                fillAddResourceDialogAndOpen()
             }
         }
         

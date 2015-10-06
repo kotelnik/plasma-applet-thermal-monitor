@@ -51,8 +51,8 @@ Item {
     property var systemmonitorAvailableSources: systemmonitorDS.sources
     property var systemmonitorSourcesToAdd: []
     
-    property double overallWidth: vertical ? itemWidth : visualModel.count * itemWidth + (visualModel.count-1) * itemMargin
-    property double overallHeight: vertical ? visualModel.count * itemHeight + (visualModel.count-1) * itemMargin : itemHeight
+    property double overallWidth: vertical ? itemWidth : temperatureModel.count * itemWidth + (temperatureModel.count-1) * itemMargin
+    property double overallHeight: vertical ? temperatureModel.count * itemHeight + (temperatureModel.count-1) * itemMargin : itemHeight
     
     Layout.preferredWidth:  overallWidth
     Layout.preferredHeight: overallHeight
@@ -70,7 +70,7 @@ Item {
 
         anchors.centerIn: parent
         
-        visible: visualModel.count === 0
+        visible: temperatureModel.count === 0
 
         height: itemHeight
         width: height
@@ -85,25 +85,18 @@ Item {
         orientation: vertical ? ListView.Vertical : ListView.Horizontal
         spacing: itemMargin
         
-        model: visualModel
+        model: temperatureModel
         
         delegate: TemperatureItem {}
     }
 
     /*
      * 
-     * One object has these properties: temperature, deviceName
+     * One object has these properties: temperature, alias and other
      * 
      */
     ListModel {
         id: temperatureModel
-    }
-    
-    PlasmaCore.SortFilterModel {
-        id: visualModel
-//         filterRole: 'doNotShow'
-//         filterRegExp: 'false'
-        sourceModel: temperatureModel
     }
     
     Component.onCompleted: {
@@ -150,7 +143,21 @@ Item {
             var tempObj = temperatureModel.get(i)
             var source = tempObj.sourceName
             
-            if (source.indexOf('udisks/') === 0) {
+            if (source === 'group') {
+                
+                dbgprint('adding group: ' + tempObj.alias)
+                
+                for (var key in tempObj.childSourceObjects) {
+                    
+                    var cmdSource = ModelUtils.getUdisksTemperatureCmd(key)
+                    
+                    dbgprint('adding source (for group): ' + cmdSource)
+                
+                    udisksDS.connectedSources.push(cmdSource)
+                    
+                }
+                
+            } else if (source.indexOf('udisks/') === 0) {
                 
                 var diskLabel = source.substring('udisks/'.length)
                 var cmdSource = ModelUtils.getUdisksTemperatureCmd(diskLabel)

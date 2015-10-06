@@ -29,17 +29,17 @@ Item {
     // all temperatures defaults to Celsius
     // Fahrenheit is being computed while putting int string for display
     //
-    property bool warningState: temperature >= plasmoid.configuration.warningTemperature
-    property bool meltdownState: temperature >= plasmoid.configuration.meltdownTemperature
+    property bool warningState: temperature >= warningTemperature
+    property bool meltdownState: temperature >= meltdownTemperature
     
     
     Text {
-        id: deviceNameText
+        id: aliasText
         
         color: theme.textColor
         font.pointSize: aliasFontSize
         
-        text: deviceName
+        text: alias
     }
     
     Text {

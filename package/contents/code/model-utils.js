@@ -1,80 +1,116 @@
 // mapping table for optimalization
-var modelIndexByKey = {}
-var virtualModelKeys = []
+var modelIndexBySourceName = {}
 
 /*
 var exampleObject1 = {
-    sourceName: 'lmsensors/coretemp-isa-0000/Core_0'
-    deviceName: 'lmsensors/coretemp-isa-0000/Core_0'
-    temperature: 39.8
-    warningTemperature: 70
-    meltdownTemperature: 80
-    doNotShow: true
-    childObjects: []
+    sourceName: 'lmsensors/coretemp-isa-0000/Core_0',
+    deviceName: 'lmsensors/coretemp-isa-0000/Core_0',
+    temperature: 39.8,
+    warningTemperature: 70,
+    meltdownTemperature: 80,
+    virtual: false,
+    childSourceObjects: {}
 }
 var exampleObject2 = {
-    sourceName: 'virtual-CPU'
-    deviceName: 'CPU'
-    temperature: 41.2
-    warningTemperature: 70
-    meltdownTemperature: 80
-    doNotShow: false
-    childObjects: [ 'lmsensors/coretemp-isa-0000/Core_0', 'lmsensors/coretemp-isa-0000/Core_1' ]
-}
-*/
-
-// must be explicitly called in Component.onCompleted method and after that add all sources to engines to start whipping data
-function rebuildModelIndexByKey(existingModel) {
-    modelIndexByKey = {}
-    virtualModelKeys = []
-    for (var i = 0; i < existingModel.count; i++) {
-        var obj = existingModel.get(i)
-        modelIndexByKey[obj.sourceName] = i;
-        if (obj.childObjects.length > 0) {
-            virtualModelKeys.push(obj.sourceName)
+    sourceName: 'virtual-CPU',
+    deviceName: 'CPU',
+    temperature: 41.2,
+    warningTemperature: 70,
+    meltdownTemperature: 80,
+    virtual: true,
+    childSourceObjects: {
+        'lmsensors/coretemp-isa-0000/Core_0': {
+            temperature: 0
+        },
+        'lmsensors/coretemp-isa-0000/Core_1': {
+            temperature: 0
         }
     }
 }
+*/
 
-function updateTemperatureModel(existingModel, key, temperature) {
-    
-    var index = modelIndexByKey[key]
-    if (index === undefined) {
-        print('index not found for key: ' + key)
-        return
-    }
-    
-    print('setting property temperature to ' + temperature + ', key=' + key + ', index=' + index)
-    
-    existingModel.setProperty(index, 'temperature', temperature)
-}
-
+/*
+ * Fill temperatureModel with "resources" configuration string.
+ */
 function initModels(savedSourceObjects, temperatureModel) {
     savedSourceObjects.forEach(function (savedSourceObj) {
-        var doNotShow = savedSourceObj.parentSource ? true : false
         var newObject = {
             sourceName: savedSourceObj.sourceName,
-            deviceName: savedSourceObj.alias,
+            alias: savedSourceObj.alias,
             temperature: 0,
-//             warningTemperature: plasmoid.configuration.warningTemperature,
-//             meltdownTemperature: plasmoid.configuration.meltdownTemperature,
-            doNotShow: doNotShow,
-            childObjects: []
+            overrideLimitTemperatures: savedSourceObj.overrideLimitTemperatures,
+            warningTemperature: savedSourceObj.overrideLimitTemperatures ? savedSourceObj.warningTemperature : plasmoid.configuration.warningTemperature,
+            meltdownTemperature: savedSourceObj.overrideLimitTemperatures ? savedSourceObj.meltdownTemperature : plasmoid.configuration.meltdownTemperature,
+            virtual: savedSourceObj.virtual,
+            childSourceObjects: savedSourceObj.childSourceObjects || {}
         }
         temperatureModel.append(newObject)
     })
     rebuildModelIndexByKey(temperatureModel)
 }
 
-function computeVirtuals(existingModel) {
-    virtualModelKeys.forEach(function (sourceName) {
-        var virtualObj = existingModel.get(modelIndexByKey[sourceName])
-        var temperatureSum = 0
-        virtualObj.childObjects.forEach(function (key) {
-            temperatureSum += existingModel.get(modelIndexByKey[key]).temperature
-        })
-        virtualObj.temperature = temperatureSum / virtualObj.childObjects.length
-    })
+/*
+ * Build map for optimizing temperature updating.
+ * 
+ * Must be explicitly called in Component.onCompleted method and after that add all sources to engines to start whipping data.
+ */
+function rebuildModelIndexByKey(existingModel) {
+    modelIndexBySourceName = {}
+    for (var i = 0; i < existingModel.count; i++) {
+        var obj = existingModel.get(i)
+        modelIndexBySourceName[obj.sourceName] = i
+    }
+}
+
+/*
+ * Sets temperature to existing temperatureModel -> triggers virtual temperature computation and visual update.
+ */
+function updateTemperatureModel(existingModel, sourceName, temperature) {
+    
+    var index = modelIndexBySourceName[sourceName]
+    if (index === undefined) {
+        print('index not found for sourceName: ' + sourceName)
+        return
+    }
+    
+    var temperatureToSet = temperature
+    
+    // try to set virtual temperature
+    var currentObj = existingModel.get(index)
+    if (currentObj.virtual) {
+        
+        print('setting partial virtual temperature: ' + temperature)
+        
+        var childSourceObjects = currentObj.childSourceObjects
+        var lastChildSourceObjectsSize = childSourceObjects.length
+        
+        // update single temperature in child temperatures
+        childSourceObjects[sourceName] = temperature
+        
+        //TODO when tested enough -> remove this check
+        if (lastChildSourceObjectsSize < childSourceObjects.length) {
+            print('thermalMonitor ERROR: child source object size got bigger by setting partial virtual temperature!!')
+        }
+        
+        // get highest temperature from children temperatures
+        temperatureToSet = getHighestFromVirtuals(childSourceObjects)
+    }
+    
+    print('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
+    
+    // update model
+    existingModel.setProperty(index, 'temperature', temperatureToSet)
+}
+
+function getHighestFromVirtuals(childSourceObjects) {
+    var maxTemperature = 0
+    for (var sourceName in virtualObj.childSourceObjects) {
+        var newTemperture = virtualObj.childSourceObjects[sourceName].temperature
+        if (newTemperture > maxTemperature) {
+            maxTemperature = newTemperture
+        } 
+    }
+    return maxTemperature;
 }
 
 var UDISKS_VIRTUAL_PATH_PREFIX = 'udisks/'
