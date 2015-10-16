@@ -26,7 +26,7 @@ Item {
         
         ListElement {
             text: 'Virtual Group'
-            val: 'group'
+            val: 'virtual-group'
         }
     }
     
@@ -74,7 +74,7 @@ Item {
                 sourceCombo.currentIndex = i
             }
             
-            if (source === 'group') {
+            if (source === 'virtual-group') {
                 continue
             }
             
@@ -106,6 +106,36 @@ Item {
     }
     
     
+    function fillAddResourceDialogAndOpen(temperatureObj, editResourceIndex) {
+        
+        // set dialog title
+        addResourceDialog.addResource = temperatureObj === null
+        addResourceDialog.editResourceIndex = editResourceIndex
+        
+        temperatureObj = temperatureObj || {
+            alias: '',
+            overrideLimitTemperatures: false,
+            meltdownTemperature: 10,
+            warningTemperature: 10
+        }
+        
+        // set combobox
+        reloadComboboxModel(temperatureObj)
+        
+        // alias
+        aliasTextfield.text = temperatureObj.alias
+        
+        // temperature overrides
+        overrideLimitTemperatures.checked = temperatureObj.overrideLimitTemperatures
+        warningTemperatureItem.value = temperatureObj.warningTemperature
+        meltdownTemperatureItem.value = temperatureObj.meltdownTemperature
+        
+        // open dialog
+        addResourceDialog.open()
+        
+    }
+    
+    
     Dialog {
         id: addResourceDialog
         
@@ -125,8 +155,7 @@ Item {
         
         onAccepted: {
             if (!aliasTextfield.text) {
-                aliasTextfield.text = '_'
-                return
+                aliasTextfield.text = '<UNKNOWN>'
             }
             
             var childSourceObjects = {}
@@ -173,12 +202,12 @@ Item {
                 Layout.preferredWidth: tableWidth/2
                 model: comboboxModel
                 onCurrentIndexChanged: {
-                    addResourceDialog.virtualSelected = comboboxModel.get(currentIndex).val === 'group'
+                    addResourceDialog.virtualSelected = comboboxModel.get(currentIndex).val === 'virtual-group'
                 }
             }
             
             Label {
-                text: i18n('Child sources:')
+                text: i18n('Group sources:')
                 Layout.alignment: Qt.AlignRight | Qt.AlignTop
             }
             ListView {
@@ -246,35 +275,6 @@ Item {
         }
     }
     
-    function fillAddResourceDialogAndOpen(temperatureObj, editResourceIndex) {
-        
-        // set dialog title
-        addResourceDialog.addResource = temperatureObj === null
-        addResourceDialog.editResourceIndex = editResourceIndex
-        
-        temperatureObj = temperatureObj || {
-            alias: '',
-            overrideLimitTemperatures: false,
-            meltdownTemperature: 10,
-            warningTemperature: 10
-        }
-        
-        // set combobox
-        reloadComboboxModel(temperatureObj)
-        
-        // alias
-        aliasTextfield.text = temperatureObj.alias
-        
-        // temperature overrides
-        overrideLimitTemperatures.checked = temperatureObj.overrideLimitTemperatures
-        warningTemperatureItem.value = temperatureObj.warningTemperature
-        meltdownTemperatureItem.value = temperatureObj.meltdownTemperature
-        
-        // open dialog
-        addResourceDialog.open()
-        
-    }
-    
     GridLayout {
         columns: 2
         
@@ -309,8 +309,10 @@ Item {
                     Text {
                         text: styleData.value
                         color: theme.textColor
-                        anchors.fill: parent
                         elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
                     }
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
@@ -322,13 +324,15 @@ Item {
             TableViewColumn {
                 role: 'alias'
                 title: 'Alias'
-                width: tableWidth * 0.1
+                width: tableWidth * 0.2
                 delegate: MouseArea {
                     anchors.fill: parent
                     Text {
                         text: styleData.value
                         color: theme.textColor
-                        anchors.fill: parent
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
                     }
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
@@ -339,7 +343,7 @@ Item {
             
             TableViewColumn {
                 title: 'Action'
-                width: tableWidth * 0.3 - 4
+                width: tableWidth * 0.2 - 4
                 
                 delegate: Item {
                     
@@ -348,7 +352,8 @@ Item {
                         
                         Button {
                             iconName: 'go-up'
-                            Layout.preferredHeight: 23
+                            Layout.preferredWidth: 30
+                            Layout.preferredHeight: 20
                             onClicked: {
                                 resourcesModel.move(styleData.row, styleData.row - 1, 1)
                                 resourcesModelChanged()
@@ -358,7 +363,8 @@ Item {
                         
                         Button {
                             iconName: 'go-down'
-                            Layout.preferredHeight: 23
+                            Layout.preferredWidth: 30
+                            Layout.preferredHeight: 20
                             onClicked: {
                                 resourcesModel.move(styleData.row, styleData.row + 1, 1)
                                 resourcesModelChanged()
@@ -368,7 +374,8 @@ Item {
                         
                         Button {
                             iconName: 'list-remove'
-                            Layout.preferredHeight: 23
+                            Layout.preferredWidth: 30
+                            Layout.preferredHeight: 20
                             onClicked: {
                                 resourcesModel.remove(styleData.row)
                                 resourcesModelChanged()
