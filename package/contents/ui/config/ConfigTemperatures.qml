@@ -261,6 +261,18 @@ Item {
             Item {
                 Layout.columnSpan: 2
                 width: 2
+                height: 5
+            }
+            
+            Label {
+                text: i18n("NOTE: Group of sources shows the highest temperature of chosen sources.")
+                Layout.columnSpan: 2
+                enabled: addResourceDialog.virtualSelected
+            }
+            
+            Item {
+                Layout.columnSpan: 2
+                width: 2
                 height: 10
             }
             
