@@ -62,7 +62,7 @@ Item {
         
         print('sourceName to select: ' + temperatureObj.sourceName)
         
-        if (temperatureObj.sourceName === 'virtual-group') {
+        if (temperatureObj.sourceName === 'group-of-sources') {
             addResourceDialog.sourceTypeSwitch = 1
         } else {
             addResourceDialog.sourceTypeSwitch = 0
@@ -192,7 +192,7 @@ Item {
             }
             
             var newObject = {
-                sourceName: virtualSelected ? 'virtual-group' : comboboxModel.get(sourceCombo.currentIndex).val,
+                sourceName: virtualSelected ? 'group-of-sources' : comboboxModel.get(sourceCombo.currentIndex).val,
                 alias: aliasTextfield.text,
                 overrideLimitTemperatures: overrideLimitTemperatures.checked,
                 warningTemperature: warningTemperatureItem.value,

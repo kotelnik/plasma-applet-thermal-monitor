@@ -136,7 +136,7 @@ Item {
             var tempObj = temperatureModel.get(i)
             var source = tempObj.sourceName
             
-            if (source === 'virtual-group') {
+            if (source === 'group-of-sources') {
                 
                 dbgprint('adding group: ' + tempObj.alias)
                 
