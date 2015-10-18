@@ -27,6 +27,8 @@ Item {
     
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
     
+    property bool initialized: false
+    
     // configuration
     property bool fahrenheitEnabled: plasmoid.configuration.fahrenheitEnabled
     property string configuredResources: plasmoid.configuration.resources
@@ -101,10 +103,15 @@ Item {
     
     Component.onCompleted: {
         plasmoid.setAction('reloadSources', i18n('Reload Temperature Sources'), 'system-reboot');
+        reloadAllSources()
     }
     
     onConfiguredResourcesChanged: {
         dbgprint('configured resources changed')
+        if (!initialized) {
+            dbgprint('applet not initialized -> no reloading sources')
+            return
+        }
         reloadAllSources()
     }
     
@@ -156,6 +163,8 @@ Item {
         }
         
         ModelUtils.rebuildModelIndexByKey(temperatureModel)
+        
+        initialized = true
         
         dbgprint('reloadAllSources() DONE')
     }
