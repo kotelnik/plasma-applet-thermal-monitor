@@ -1,6 +1,6 @@
 // mapping table for optimalization
-var modelIndexBySourceName = {}
-var virtualObjectMapByIndex = []
+var modelIndexesBySourceName = {}
+var virtualObjectMapByIndex = {}
 
 /*
 var exampleObject1 = {
@@ -56,19 +56,26 @@ function initModels(savedSourceObjects, temperatureModel) {
  * Must be explicitly called in Component.onCompleted method and after that add all sources to engines to start whipping data.
  */
 function rebuildModelIndexByKey(existingModel) {
-    modelIndexBySourceName = {}
+    modelIndexesBySourceName = {}
+    virtualObjectMapByIndex = {}
     for (var i = 0; i < existingModel.count; i++) {
         var obj = existingModel.get(i)
         if (obj.virtual) {
             for (var key in obj.childSourceObjects) {
                 print('indexing virtual: ' + key + ' with index ' + i)
-                modelIndexBySourceName[key] = i
+                addToListInMap(modelIndexesBySourceName, key, i)
             }
         } else {
             print('indexing: ' + obj.sourceName + ' with index ' + i)
-            modelIndexBySourceName[obj.sourceName] = i
+            addToListInMap(modelIndexesBySourceName, obj.sourceName, i)
         }
     }
+}
+
+function addToListInMap(map, key, addObject) {
+    var list = map[key] || []
+    map[key] = list
+    list.push(addObject)
 }
 
 /*
@@ -76,39 +83,34 @@ function rebuildModelIndexByKey(existingModel) {
  */
 function updateTemperatureModel(existingModel, sourceName, temperature) {
     
-    //TODO what if some sources are added more then once?
-    
-    var index = modelIndexBySourceName[sourceName]
-    if (index === undefined) {
-        print('index not found for sourceName: ' + sourceName)
-        return
-    }
-    
     var temperatureToSet = temperature
     
-    // try to set virtual temperature
-    var currentObj = existingModel.get(index)
-    if (currentObj.virtual) {
+    var indexes = modelIndexesBySourceName[sourceName] || []
+    
+    indexes.forEach(function (index) {
         
-        print('setting partial virtual temperature: ' + temperature)
-        
-        var cachedObject = virtualObjectMapByIndex[index] || {}
-        virtualObjectMapByIndex[index] = cachedObject
-        cachedObject[sourceName] = {
-            temperature: temperature
+        // try to set virtual temperature
+        var currentObj = existingModel.get(index)
+        if (currentObj.virtual) {
+            
+            print('setting partial virtual temperature: ' + temperature + ', index=' + index)
+            
+            var cachedObject = virtualObjectMapByIndex[index] || {}
+            virtualObjectMapByIndex[index] = cachedObject
+            cachedObject[sourceName] = {
+                temperature: temperature
+            }
+            
+            return
         }
-        //TODO when tested enough -> remove this check
-//         if (lastChildSourceObjectsSize < childSourceObjects.length) {
-//             print('thermalMonitor ERROR: child source object size got bigger by setting partial virtual temperature!!')
-//         }
         
-        return
-    }
+        print('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
+        
+        // update model
+        existingModel.setProperty(index, 'temperature', temperatureToSet)
+        
+    })
     
-    print('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
-    
-    // update model
-    existingModel.setProperty(index, 'temperature', temperatureToSet)
 }
 
 function computeVirtuals(existingModel) {

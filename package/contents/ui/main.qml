@@ -101,11 +101,6 @@ Item {
     
     Component.onCompleted: {
         plasmoid.setAction('reloadSources', i18n('Reload Temperature Sources'), 'system-reboot');
-        
-        dbgprint('onCompleted() END ... properties of udisksDS')
-        for (var key in udisksDS) {
-            dbgprint(key + ' -> ' + udisksDS[key])
-        }
     }
     
     onConfiguredResourcesChanged: {
@@ -119,10 +114,7 @@ Item {
     
     function reloadAllSources() {
         
-        dbgprint('reloadAllSources() ... properties of udisksDS')
-        for (var key in udisksDS) {
-            dbgprint(key + ' -> ' + udisksDS[key])
-        }
+        dbgprint('reloading all sources...')
         
         var resources = ConfigUtils.getResourcesObjectArray()
         
@@ -165,10 +157,7 @@ Item {
         
         ModelUtils.rebuildModelIndexByKey(temperatureModel)
         
-        dbgprint('reloadAllSources()DONE ... properties of udisksDS')
-        for (var key in udisksDS) {
-            dbgprint(key + ' -> ' + udisksDS[key])
-        }
+        dbgprint('reloadAllSources() DONE')
     }
     
     function addSourceToDs(source) {
@@ -181,11 +170,11 @@ Item {
             
             dbgprint('adding source: ' + cmdSource)
             
-            udisksDS.connectedSources.push(cmdSource)
+            addToSourcesOfDatasource(udisksDS, cmdSource)
             
         } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
             
-            nvidiaDS.connectedSources.push(nvidiaDS.nvidiaSource)
+            addToSourcesOfDatasource(nvidiaDS, nvidiaDS.nvidiaSource)
             
         } else {
             
@@ -193,7 +182,7 @@ Item {
             
             if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
                 dbgprint('adding to connected')
-                systemmonitorDS.connectedSources.push(source)
+                addToSourcesOfDatasource(systemmonitorDS, source)
             } else {
                 dbgprint('adding to sta')
                 systemmonitorSourcesToAdd.push(source)
@@ -201,6 +190,15 @@ Item {
             
         }
         
+    }
+    
+    function addToSourcesOfDatasource(datasource, sourceName) {
+        if (systemmonitorDS.connectedSources.indexOf(sourceName) > -1) {
+            // already added
+            dbgprint('source already added: ' + sourceName)
+            return
+        }
+        systemmonitorDS.connectedSources.push(sourceName)
     }
     
     PlasmaCore.DataSource {
@@ -219,7 +217,7 @@ Item {
                 systemmonitorAvailableSources.push(source)
                 var staIndex = systemmonitorSourcesToAdd.indexOf(source)
                 if (staIndex > -1) {
-                    systemmonitorDS.connectedSources.push(source)
+                    addToSourcesOfDatasource(systemmonitorDS, source)
                     systemmonitorSourcesToAdd.splice(staIndex, 1)
                 }
                 

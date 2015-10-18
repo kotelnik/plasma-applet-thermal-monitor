@@ -23,11 +23,6 @@ Item {
     
     ListModel {
         id: comboboxModel
-        
-        ListElement {
-            text: 'Virtual Group'
-            val: 'virtual-group'
-        }
     }
     
     ListModel {
@@ -67,15 +62,18 @@ Item {
         
         print('sourceName to select: ' + temperatureObj.sourceName)
         
+        if (temperatureObj.sourceName === 'virtual-group') {
+            addResourceDialog.sourceTypeSwitch = 1
+        } else {
+            addResourceDialog.sourceTypeSwitch = 0
+        }
+        addResourceDialog.setVirtualSelected()
+        
         for (var i = 0; i < comboboxModel.count; i++) {
             var source = comboboxModel.get(i).val
             
             if (source === temperatureObj.sourceName) {
                 sourceCombo.currentIndex = i
-            }
-            
-            if (source === 'virtual-group') {
-                continue
             }
             
             checkboxesSourcesModel.append({
@@ -115,8 +113,8 @@ Item {
         temperatureObj = temperatureObj || {
             alias: '',
             overrideLimitTemperatures: false,
-            meltdownTemperature: 10,
-            warningTemperature: 10
+            meltdownTemperature: 90,
+            warningTemperature: 70
         }
         
         // set combobox
@@ -153,6 +151,30 @@ Item {
         
         standardButtons: StandardButton.Ok | StandardButton.Cancel
         
+        property int sourceTypeSwitch: 0
+            
+        ExclusiveGroup {
+            id: sourceTypeGroup
+        }
+        
+        onSourceTypeSwitchChanged: {
+            switch (sourceTypeSwitch) {
+            case 0:
+                sourceTypeGroup.current = singleSourceTypeRadio;
+                break;
+            case 1:
+                sourceTypeGroup.current = multipleSourceTypeRadio;
+                break;
+            default:
+            }
+            setVirtualSelected()
+        }
+        
+        function setVirtualSelected() {
+            virtualSelected = sourceTypeSwitch === 1
+            print('SET VIRTUAL SELECTED: ' + virtualSelected)
+        }
+        
         onAccepted: {
             if (!aliasTextfield.text) {
                 aliasTextfield.text = '<UNKNOWN>'
@@ -170,7 +192,7 @@ Item {
             }
             
             var newObject = {
-                sourceName: comboboxModel.get(sourceCombo.currentIndex).val,
+                sourceName: virtualSelected ? 'virtual-group' : comboboxModel.get(sourceCombo.currentIndex).val,
                 alias: aliasTextfield.text,
                 overrideLimitTemperatures: overrideLimitTemperatures.checked,
                 warningTemperature: warningTemperatureItem.value,
@@ -193,22 +215,36 @@ Item {
         GridLayout {
             columns: 2
             
-            Label {
-                text: i18n('Source:')
-                Layout.alignment: Qt.AlignRight
+            RadioButton {
+                id: singleSourceTypeRadio
+                exclusiveGroup: sourceTypeGroup
+                text: i18n("Source")
+                onCheckedChanged: {
+                    if (checked) {
+                        addResourceDialog.sourceTypeSwitch = 0
+                    }
+                    addResourceDialog.setVirtualSelected()
+                }
+                checked: true
             }
             ComboBox {
                 id: sourceCombo
                 Layout.preferredWidth: tableWidth/2
                 model: comboboxModel
-                onCurrentIndexChanged: {
-                    addResourceDialog.virtualSelected = comboboxModel.get(currentIndex).val === 'virtual-group'
-                }
+                enabled: !addResourceDialog.virtualSelected
             }
             
-            Label {
-                text: i18n('Group sources:')
-                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+            RadioButton {
+                id: multipleSourceTypeRadio
+                exclusiveGroup: sourceTypeGroup
+                text: i18n("Group of sources")
+                onCheckedChanged: {
+                    if (checked) {
+                        addResourceDialog.sourceTypeSwitch = 1
+                    }
+                    addResourceDialog.setVirtualSelected()
+                }
+                Layout.alignment: Qt.AlignTop
             }
             ListView {
                 id: checkboxesSourcesListView
