@@ -62,11 +62,11 @@ function rebuildModelIndexByKey(existingModel) {
         var obj = existingModel.get(i)
         if (obj.virtual) {
             for (var key in obj.childSourceObjects) {
-                print('indexing virtual: ' + key + ' with index ' + i)
+                dbgprint('indexing virtual: ' + key + ' with index ' + i)
                 addToListInMap(modelIndexesBySourceName, key, i)
             }
         } else {
-            print('indexing: ' + obj.sourceName + ' with index ' + i)
+            dbgprint('indexing: ' + obj.sourceName + ' with index ' + i)
             addToListInMap(modelIndexesBySourceName, obj.sourceName, i)
         }
     }
@@ -93,7 +93,7 @@ function updateTemperatureModel(existingModel, sourceName, temperature) {
         var currentObj = existingModel.get(index)
         if (currentObj.virtual) {
             
-            print('setting partial virtual temperature: ' + temperature + ', index=' + index)
+            dbgprint('setting partial virtual temperature: ' + temperature + ', index=' + index)
             
             var cachedObject = virtualObjectMapByIndex[index] || {}
             virtualObjectMapByIndex[index] = cachedObject
@@ -104,7 +104,7 @@ function updateTemperatureModel(existingModel, sourceName, temperature) {
             return
         }
         
-        print('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
+        dbgprint('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
         
         // update model
         existingModel.setProperty(index, 'temperature', temperatureToSet)
@@ -118,7 +118,7 @@ function computeVirtuals(existingModel) {
         var cachedObject = virtualObjectMapByIndex[index]
         var temperatureToSet = getHighestFromVirtuals(cachedObject)
         var modelObj = existingModel.get(index)
-        print('setting property temperature to ' + temperatureToSet + ', group alias=' + modelObj.alias)
+        dbgprint('setting property temperature to ' + temperatureToSet + ', group alias=' + modelObj.alias)
         
         // update model
         existingModel.setProperty(index, 'temperature', temperatureToSet)
@@ -129,7 +129,7 @@ function getHighestFromVirtuals(childSourceObjects) {
     var maxTemperature = 0
     for (var sourceName in childSourceObjects) {
         var newTemperture = childSourceObjects[sourceName].temperature
-        print('iterating over virtual: ' + sourceName + ', temp: ' + newTemperture)
+        dbgprint('iterating over virtual: ' + sourceName + ', temp: ' + newTemperture)
         if (newTemperture > maxTemperature) {
             maxTemperature = newTemperture
         } 

@@ -59,7 +59,12 @@ Item {
     Layout.preferredWidth:  overallWidth
     Layout.preferredHeight: overallHeight
     
+    property bool debugLogging: false
+    
     function dbgprint(msg) {
+        if (!debugLogging) {
+            return
+        }
         print('[thermalMonitor] ' + msg)
     }
     
