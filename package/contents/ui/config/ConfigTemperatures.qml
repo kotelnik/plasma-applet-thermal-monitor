@@ -341,9 +341,8 @@ Item {
             
             headerVisible: true
             
-            Text {
+            Label {
                 text: i18n('Add resources by clicking "+" button.')
-                color: theme.textColor
                 anchors.centerIn: parent
                 visible: resourcesModel.count === 0
             }
@@ -354,11 +353,9 @@ Item {
                 width: tableWidth * 0.6
                 delegate: MouseArea {
                     anchors.fill: parent
-                    Text {
+                    Label {
                         text: styleData.value
-                        color: theme.textColor
                         elide: Text.ElideRight
-                        anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 5
                     }
@@ -372,13 +369,11 @@ Item {
             TableViewColumn {
                 role: 'alias'
                 title: 'Alias'
-                width: tableWidth * 0.2
+                width: tableWidth * 0.15
                 delegate: MouseArea {
                     anchors.fill: parent
-                    Text {
+                    Label {
                         text: styleData.value
-                        color: theme.textColor
-                        anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 5
                     }
@@ -391,17 +386,18 @@ Item {
             
             TableViewColumn {
                 title: 'Action'
-                width: tableWidth * 0.2 - 4
+                width: tableWidth * 0.25 - 4
                 
                 delegate: Item {
                     
                     GridLayout {
+                        height: parent.height
                         columns: 3
+                        rowSpacing: 0
                         
                         Button {
                             iconName: 'go-up'
-                            Layout.preferredWidth: 30
-                            Layout.preferredHeight: 20
+                            Layout.fillHeight: true
                             onClicked: {
                                 resourcesModel.move(styleData.row, styleData.row - 1, 1)
                                 resourcesModelChanged()
@@ -411,8 +407,7 @@ Item {
                         
                         Button {
                             iconName: 'go-down'
-                            Layout.preferredWidth: 30
-                            Layout.preferredHeight: 20
+                            Layout.fillHeight: true
                             onClicked: {
                                 resourcesModel.move(styleData.row, styleData.row + 1, 1)
                                 resourcesModelChanged()
@@ -422,8 +417,7 @@ Item {
                         
                         Button {
                             iconName: 'list-remove'
-                            Layout.preferredWidth: 30
-                            Layout.preferredHeight: 20
+                            Layout.fillHeight: true
                             onClicked: {
                                 resourcesModel.remove(styleData.row)
                                 resourcesModelChanged()
