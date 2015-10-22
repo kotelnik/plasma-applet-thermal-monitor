@@ -182,17 +182,19 @@ Item {
             var cmdSource = ModelUtils.getUdisksTemperatureCmd(diskLabel)
             udisksDS.cmdSourceBySourceName[cmdSource] = source
             
-            dbgprint('adding source: ' + cmdSource)
+            dbgprint('adding source to udisksDS: ' + cmdSource)
             
             addToSourcesOfDatasource(udisksDS, cmdSource)
             
         } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
             
+            dbgprint('adding source to nvidiaDS')
+            
             addToSourcesOfDatasource(nvidiaDS, nvidiaDS.nvidiaSource)
             
         } else {
             
-            dbgprint('adding source: ' + source)
+            dbgprint('adding source to systemmonitorDS: ' + source)
             
             if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
                 dbgprint('adding to connected')
@@ -207,12 +209,12 @@ Item {
     }
     
     function addToSourcesOfDatasource(datasource, sourceName) {
-        if (systemmonitorDS.connectedSources.indexOf(sourceName) > -1) {
+        if (datasource.connectedSources.indexOf(sourceName) > -1) {
             // already added
             dbgprint('source already added: ' + sourceName)
             return
         }
-        systemmonitorDS.connectedSources.push(sourceName)
+        datasource.connectedSources.push(sourceName)
     }
     
     PlasmaCore.DataSource {

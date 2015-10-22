@@ -358,6 +358,8 @@ Item {
                         elide: Text.ElideRight
                         anchors.left: parent.left
                         anchors.leftMargin: 5
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
                     }
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
@@ -374,8 +376,11 @@ Item {
                     anchors.fill: parent
                     Label {
                         text: styleData.value
+                        elide: Text.ElideRight
                         anchors.left: parent.left
                         anchors.leftMargin: 5
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
                     }
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
