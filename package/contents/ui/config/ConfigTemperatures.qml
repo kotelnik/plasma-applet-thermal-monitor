@@ -62,12 +62,10 @@ Item {
         
         print('sourceName to select: ' + temperatureObj.sourceName)
         
-        if (temperatureObj.sourceName === 'group-of-sources') {
-            addResourceDialog.sourceTypeSwitch = 1
-        } else {
-            addResourceDialog.sourceTypeSwitch = 0
-        }
+        addResourceDialog.sourceTypeSwitch = temperatureObj.sourceName === 'group-of-sources' ? 1 : 0
         addResourceDialog.setVirtualSelected()
+        
+        addResourceDialog.groupSources.length = 0
         
         for (var i = 0; i < comboboxModel.count; i++) {
             var source = comboboxModel.get(i).val
@@ -76,11 +74,15 @@ Item {
                 sourceCombo.currentIndex = i
             }
             
+            var checkboxChecked = childSourceObjectsEmpty || (source in childSourceObjects)
             checkboxesSourcesModel.append({
                 text: source,
                 val: source,
-                checkboxChecked: childSourceObjectsEmpty || (source in childSourceObjects)
+                checkboxChecked: checkboxChecked
             })
+            if (checkboxChecked) {
+                addResourceDialog.groupSources.push(source)
+            }
         }
         
     }
@@ -152,6 +154,8 @@ Item {
         standardButtons: StandardButton.Ok | StandardButton.Cancel
         
         property int sourceTypeSwitch: 0
+        
+        property var groupSources: []
             
         ExclusiveGroup {
             id: sourceTypeGroup
@@ -181,15 +185,12 @@ Item {
             }
             
             var childSourceObjects = {}
-            for (var i = 0; i < checkboxesSourcesModel.count; i++) {
-                if (checkboxesSourcesListView.children[0].children[i].checked === true) {
-                    var sourceName = checkboxesSourcesModel.get(i).val
-                    print ('adding source to group: ' + sourceName)
-                    childSourceObjects[checkboxesSourcesModel.get(i).val] = {
-                        temperature: 0
-                    }
+            groupSources.forEach(function (groupSource) {
+                print ('adding source to group: ' + groupSource)
+                childSourceObjects[groupSource] = {
+                    temperature: 0
                 }
-            }
+            })
             
             var newObject = {
                 sourceName: virtualSelected ? 'group-of-sources' : comboboxModel.get(sourceCombo.currentIndex).val,
@@ -252,6 +253,18 @@ Item {
                 delegate: CheckBox {
                     text: val
                     checked: checkboxChecked
+                    onCheckedChanged: {
+                        if (checked) {
+                            if (addResourceDialog.groupSources.indexOf(val) === -1) {
+                                addResourceDialog.groupSources.push(val)
+                            }
+                        } else {
+                            var idx = addResourceDialog.groupSources.indexOf(val)
+                            if (idx !== -1) {
+                                addResourceDialog.groupSources.splice(idx, 1)
+                            }
+                        }
+                    }
                 }
                 enabled: addResourceDialog.virtualSelected
                 Layout.preferredWidth: tableWidth/2
