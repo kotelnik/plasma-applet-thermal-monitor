@@ -268,7 +268,7 @@ Item {
                 }
                 enabled: addResourceDialog.virtualSelected
                 Layout.preferredWidth: tableWidth/2
-                Layout.preferredHeight: (theme.defaultFont.pointSize * 2) * checkboxesSourcesModel.count + 5
+                Layout.preferredHeight: contentHeight
             }
             
             Item {

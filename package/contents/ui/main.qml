@@ -242,10 +242,13 @@ Item {
         }
 
         onNewData: {
+            var temperature = 0
             if (data.value === undefined) {
-                return
+                dbgprint('data for source ' + sourceName + ' not yet available')
+            } else {
+                temperature = parseFloat(data.value)
             }
-            ModelUtils.updateTemperatureModel(temperatureModel, sourceName, parseFloat(data.value))
+            ModelUtils.updateTemperatureModel(temperatureModel, sourceName, temperature)
         }
         interval: updateInterval
     }
@@ -262,12 +265,13 @@ Item {
             
             dbgprint('udisks new data - valid: ' + valid + ', stdout: ' + data.stdout)
             
+            var temperature = 0
             if (data['exit code'] > 0) {
                 dbgprint('new data error: ' + data.stderr)
-                return
+            } else {
+                temperature = ModelUtils.getCelsiaFromUdisksStdout(data.stdout)
             }
             
-            var temperature = ModelUtils.getCelsiaFromUdisksStdout(data.stdout)
             ModelUtils.updateTemperatureModel(temperatureModel, cmdSourceBySourceName[sourceName], temperature)
         }
         interval: updateInterval
@@ -282,11 +286,14 @@ Item {
         connectedSources: []
         
         onNewData: {
+            var temperature = 0
             if (data['exit code'] > 0) {
-                return
+                dbgprint('new data error: ' + data.stderr)
+            } else {
+                temperature = parseFloat(data.stdout)
             }
             
-            ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', parseFloat(data.stdout))
+            ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', temperature)
         }
         interval: updateInterval
     }

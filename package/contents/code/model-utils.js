@@ -107,7 +107,7 @@ function updateTemperatureModel(existingModel, sourceName, temperature) {
         dbgprint('setting property temperature to ' + temperatureToSet + ', sourceName=' + sourceName + ', index=' + index)
         
         // update model
-        existingModel.setProperty(index, 'temperature', temperatureToSet)
+        setTemperatureToExistingModel(existingModel, index, temperatureToSet)
         
     })
     
@@ -121,7 +121,7 @@ function computeVirtuals(existingModel) {
         dbgprint('setting property temperature to ' + temperatureToSet + ', group alias=' + modelObj.alias)
         
         // update model
-        existingModel.setProperty(index, 'temperature', temperatureToSet)
+        setTemperatureToExistingModel(existingModel, index, temperatureToSet)
     }
 }
 
@@ -135,6 +135,10 @@ function getHighestFromVirtuals(childSourceObjects) {
         } 
     }
     return maxTemperature;
+}
+
+function setTemperatureToExistingModel(existingModel, index, temperatureToSet) {
+    existingModel.setProperty(index, 'temperature', temperatureToSet)
 }
 
 var UDISKS_VIRTUAL_PATH_PREFIX = 'udisks/'

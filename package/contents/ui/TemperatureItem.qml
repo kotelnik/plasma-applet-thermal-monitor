@@ -17,6 +17,7 @@
 import QtQuick 2.2
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
+import org.kde.plasma.components 2.0 as PlasmaComponents
 import "../code/temperature-utils.js" as TemperatureUtils
 
 Item {
@@ -31,18 +32,18 @@ Item {
     //
     property bool warningState: temperature >= warningTemperature
     property bool meltdownState: temperature >= meltdownTemperature
+    property bool isOff: temperature === 0
     
-    
-    Text {
+    PlasmaComponents.Label {
         id: aliasText
         
-        color: theme.textColor
         font.pointSize: aliasFontSize
+        verticalAlignment: Text.AlignTop
         
         text: alias
     }
     
-    Text {
+    PlasmaComponents.Label {
         id: stateIcon
         
         anchors.bottom: parent.bottom
@@ -52,22 +53,24 @@ Item {
         color: meltdownState ? '#FFFF0000' : warningState ? '#FFFF8000' : '#FF66FF66'
         font.pointSize: iconFontSize
         font.family: 'FontAwesome'
+        verticalAlignment: Text.AlignBottom
         
-        text: meltdownState ? '\uf06d' : warningState ? '\uf071' : '\uf05d'
+        text: meltdownState ? '\uf06d' : (warningState ? '\uf071' : '\uf05d')
         visible: meltdownState || warningState
     }
     
-    Text {
+    PlasmaComponents.Label {
         id: temperatureText
         
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.rightMargin: temperatureRightMargin
         
-        color: theme.textColor
-        font.pointSize: temperatureFontSize
+        font.pointSize: temperatureFontSize * (isOff ? 0.7 : 1)
+        verticalAlignment: Text.AlignBottom
         
-        text: TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
+        opacity: isOff ? 0.7 : 1
+        text: isOff ? 'OFF' : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
     }
     
 }
