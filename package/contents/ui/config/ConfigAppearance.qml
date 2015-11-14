@@ -3,9 +3,7 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 
 Item {
-    width: childrenRect.width
-    height: childrenRect.height
-
+    
     property alias cfg_aliasFontSize: aliasFontSize.value
     property alias cfg_temperatureFontSize: temperatureFontSize.value
     property alias cfg_iconFontSize: iconFontSize.value
