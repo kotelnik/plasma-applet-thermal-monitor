@@ -19,13 +19,13 @@
     
     <group name="Appearance">
         <entry name="aliasFontSize" type="Int">
-            <default>20</default>
+            <default>27</default>
         </entry>
         <entry name="temperatureFontSize" type="Int">
-            <default>35</default>
+            <default>46</default>
         </entry>
         <entry name="iconFontSize" type="Int">
-            <default>15</default>
+            <default>21</default>
         </entry>
         <entry name="temperatureRightMargin" type="Int">
             <default>0</default>

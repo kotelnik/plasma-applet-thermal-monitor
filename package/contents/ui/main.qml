@@ -37,7 +37,6 @@ Item {
     property int itemMargin: 5
     property double itemWidth:  parent === null ? 0 : vertical ? parent.width : parent.height
     property double itemHeight: itemWidth
-    property double fontPointSize: itemHeight * 0.2
     
     property color warningColor: Qt.tint(theme.textColor, '#60FF0000')
     property var textFontFamily: theme.defaultFont.family

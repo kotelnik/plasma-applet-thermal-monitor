@@ -37,7 +37,7 @@ Item {
     PlasmaComponents.Label {
         id: aliasText
         
-        font.pointSize: aliasFontSize
+        font.pixelSize: aliasFontSize
         verticalAlignment: Text.AlignTop
         
         text: alias
@@ -51,7 +51,7 @@ Item {
         anchors.right: parent.right
         
         color: meltdownState ? '#FFFF0000' : warningState ? '#FFFF8000' : '#FF66FF66'
-        font.pointSize: iconFontSize
+        font.pixelSize: iconFontSize
         font.family: 'FontAwesome'
         verticalAlignment: Text.AlignBottom
         
@@ -66,7 +66,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: temperatureRightMargin
         
-        font.pointSize: temperatureFontSize * (isOff ? 0.7 : 1)
+        font.pixelSize: temperatureFontSize * (isOff ? 0.7 : 1)
         verticalAlignment: Text.AlignBottom
         
         opacity: isOff ? 0.7 : 1
