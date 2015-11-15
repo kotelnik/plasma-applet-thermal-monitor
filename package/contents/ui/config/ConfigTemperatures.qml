@@ -9,7 +9,7 @@ import "../../code/model-utils.js" as ModelUtils
 Item {
     id: resourcesConfigPage
     
-    property double tableWidth: 550
+    property double tableWidth: parent.width
 
     property string cfg_resources
     property alias cfg_warningTemperature: warningTemperatureSpinBox.value

@@ -11,8 +11,9 @@ Item {
     property alias cfg_iconBottomMargin: iconBottomMargin.value
     
     GridLayout {
-        Layout.fillWidth: true
         columns: 2
+        anchors.left: parent.left
+        anchors.right: parent.right
         
         Label {
             text: i18n('Alias font size:')
@@ -23,7 +24,7 @@ Item {
             stepSize: 1
             minimumValue: 1
             maximumValue: 100
-            Layout.preferredWidth: 300
+            Layout.fillWidth: true
         }
         
         Label {
@@ -35,7 +36,7 @@ Item {
             stepSize: 1
             minimumValue: 1
             maximumValue: 100
-            Layout.preferredWidth: 300
+            Layout.fillWidth: true
         }
         
         Label {
@@ -47,7 +48,7 @@ Item {
             stepSize: 1
             minimumValue: 1
             maximumValue: 100
-            Layout.preferredWidth: 300
+            Layout.fillWidth: true
         }
 
         Label {
@@ -59,7 +60,7 @@ Item {
             stepSize: 1
             minimumValue: 0
             maximumValue: 80
-            Layout.preferredWidth: 300
+            Layout.fillWidth: true
         }
         
         Label {
@@ -71,7 +72,7 @@ Item {
             stepSize: 1
             minimumValue: 0
             maximumValue: 100
-            Layout.preferredWidth: 300
+            Layout.fillWidth: true
         }
     }
     
