@@ -9,6 +9,7 @@ Item {
     property alias cfg_iconFontSize: iconFontSize.value
     property alias cfg_temperatureRightMargin: temperatureRightMargin.value
     property alias cfg_iconBottomMargin: iconBottomMargin.value
+    property alias cfg_enableLabelDropShadow: enableLabelDropShadow.checked
     
     GridLayout {
         columns: 2
@@ -73,6 +74,18 @@ Item {
             minimumValue: 0
             maximumValue: 100
             Layout.fillWidth: true
+        }
+        
+        Item {
+            width: 2
+            height: 10
+            Layout.columnSpan: 2
+        }
+        
+        CheckBox {
+            id: enableLabelDropShadow
+            Layout.columnSpan: 2
+            text: i18n('Enable label drop shadow')
         }
     }
     

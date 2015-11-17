@@ -48,6 +48,7 @@ Item {
     property double iconFontSize: itemHeight * plasmoid.configuration.iconFontSize * 0.01
     property double temperatureRightMargin: itemHeight * plasmoid.configuration.temperatureRightMargin * 0.01
     property double iconBottomMargin: itemHeight * plasmoid.configuration.iconBottomMargin * 0.01
+    property bool enableLabelDropShadow: plasmoid.configuration.enableLabelDropShadow
     
     property var systemmonitorAvailableSources: systemmonitorDS.sources
     property var systemmonitorSourcesToAdd: []

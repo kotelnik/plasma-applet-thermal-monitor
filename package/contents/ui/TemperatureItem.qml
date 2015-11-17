@@ -35,15 +35,6 @@ Item {
     property bool isOff: temperature === 0
     
     PlasmaComponents.Label {
-        id: aliasText
-        
-        font.pixelSize: aliasFontSize
-        verticalAlignment: Text.AlignTop
-        
-        text: alias
-    }
-    
-    PlasmaComponents.Label {
         id: stateIcon
         
         anchors.bottom: parent.bottom
@@ -59,18 +50,42 @@ Item {
         visible: meltdownState || warningState
     }
     
-    PlasmaComponents.Label {
-        id: temperatureText
+    Item {
+        id: labels
+        anchors.fill: parent
         
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.rightMargin: temperatureRightMargin
+        PlasmaComponents.Label {
+            id: aliasText
+            
+            font.pixelSize: aliasFontSize
+            verticalAlignment: Text.AlignTop
+            
+            text: alias
+        }
         
-        font.pixelSize: temperatureFontSize * (isOff ? 0.7 : 1)
-        verticalAlignment: Text.AlignBottom
-        
-        opacity: isOff ? 0.7 : 1
-        text: isOff ? 'OFF' : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
+        PlasmaComponents.Label {
+            id: temperatureText
+            
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: temperatureRightMargin
+            
+            font.pixelSize: temperatureFontSize * (isOff ? 0.7 : 1)
+            verticalAlignment: Text.AlignBottom
+            
+            opacity: isOff ? 0.7 : 1
+            text: isOff ? 'OFF' : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
+        }
+    }
+    
+    DropShadow {
+        anchors.fill: labels
+        radius: enableLabelDropShadow ? 3 : 0
+        spread: 0.8
+        fast: true
+        color: theme.backgroundColor
+        source: labels
+        visible: enableLabelDropShadow
     }
     
 }
