@@ -25,7 +25,10 @@ import "../code/config-utils.js" as ConfigUtils
 Item {
     id: main
     
+    anchors.fill: parent
+    
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
+    property bool planar: (plasmoid.formFactor == PlasmaCore.Types.Planar)
     
     property bool initialized: false
     
@@ -35,8 +38,8 @@ Item {
     property int updateInterval: 1000 * plasmoid.configuration.updateInterval
     
     property int itemMargin: 5
-    property double itemWidth:  parent === null ? 0 : vertical ? parent.width : parent.height
-    property double itemHeight: itemWidth
+    property double itemWidth:  0
+    property double itemHeight: 0
     
     property color warningColor: Qt.tint(theme.textColor, '#60FF0000')
     property var textFontFamily: theme.defaultFont.family
@@ -53,11 +56,16 @@ Item {
     property var systemmonitorAvailableSources: systemmonitorDS.sources
     property var systemmonitorSourcesToAdd: []
     
-    property double overallWidth: vertical ? itemWidth : temperatureModel.count * itemWidth + (temperatureModel.count-1) * itemMargin
-    property double overallHeight: vertical ? temperatureModel.count * itemHeight + (temperatureModel.count-1) * itemMargin : itemHeight
+    property int numberOfParts: temperatureModel.count
     
-    Layout.preferredWidth:  overallWidth
-    Layout.preferredHeight: overallHeight
+    property double parentWidth: parent.width
+    property double parentHeight: parent.height
+    
+    property double widgetWidth: 0
+    property double widgetHeight: 0
+    
+    Layout.preferredWidth: widgetWidth
+    Layout.preferredHeight: widgetHeight
     
     property bool debugLogging: false
     
@@ -66,6 +74,31 @@ Item {
             return
         }
         print('[thermalMonitor] ' + msg)
+    }
+    
+    onParentWidthChanged: setWidgetSize()
+    onParentHeightChanged: setWidgetSize()
+    onNumberOfPartsChanged: setWidgetSize()
+    
+    function setWidgetSize() {
+        if (!parentHeight) {
+            return
+        }
+        var orientationVertical = false
+        if (planar) {
+            var contentItemWidth = parentHeight
+            var contentWidth = numberOfParts * contentItemWidth + (numberOfParts-1) * itemMargin
+            var restrictToWidth = contentWidth / parentWidth > 1
+            itemWidth = restrictToWidth ? (parentWidth + itemMargin) / numberOfParts - itemMargin : contentItemWidth
+        } else if (vertical) {
+            orientationVertical = true
+            itemWidth = parentWidth
+        } else {
+            itemWidth = parentHeight
+        }
+        itemHeight = itemWidth
+        widgetWidth = orientationVertical ? itemWidth : numberOfParts * itemWidth + (numberOfParts-1) * itemMargin
+        widgetHeight = orientationVertical ? numberOfParts * itemHeight + (numberOfParts-1) * itemMargin : itemHeight
     }
     
     FontLoader {
@@ -87,16 +120,19 @@ Item {
 
     ListView {
         id: listView
-        anchors.fill: parent
         
-        orientation: vertical ? ListView.Vertical : ListView.Horizontal
+        anchors.centerIn: parent
+        width: widgetWidth
+        height: widgetHeight
+        
+        orientation: !planar && vertical ? ListView.Vertical : ListView.Horizontal
         spacing: itemMargin
         
         model: temperatureModel
         
         delegate: TemperatureItem {}
     }
-
+    
     /*
      * 
      * One object has these properties: temperature, alias and other
@@ -109,6 +145,7 @@ Item {
     Component.onCompleted: {
         plasmoid.setAction('reloadSources', i18n('Reload Temperature Sources'), 'system-reboot');
         reloadAllSources()
+        setWidgetSize()
     }
     
     onConfiguredResourcesChanged: {
