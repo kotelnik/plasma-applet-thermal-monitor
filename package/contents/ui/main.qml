@@ -35,6 +35,8 @@ Item {
     // configuration
     property bool fahrenheitEnabled: plasmoid.configuration.fahrenheitEnabled
     property string configuredResources: plasmoid.configuration.resources
+    property int baseWarningTemperature: plasmoid.configuration.warningTemperature
+    property int baseMeltdownTemperature: plasmoid.configuration.meltdownTemperature
     property int updateInterval: 1000 * plasmoid.configuration.updateInterval
     
     property int itemMargin: 5
@@ -148,8 +150,20 @@ Item {
         setWidgetSize()
     }
     
+    onBaseWarningTemperatureChanged: {
+        tryReloadSources()
+    }
+    
+    onBaseMeltdownTemperatureChanged: {
+        tryReloadSources()
+    }
+    
     onConfiguredResourcesChanged: {
         dbgprint('configured resources changed')
+        tryReloadSources()
+    }
+    
+    function tryReloadSources() {
         if (!initialized) {
             dbgprint('applet not initialized -> no reloading sources')
             return

@@ -484,7 +484,6 @@ Item {
         }
         SpinBox {
             id: warningTemperatureSpinBox
-            decimals: 1
             stepSize: 1
             minimumValue: 10
             maximumValue: 200
@@ -496,7 +495,6 @@ Item {
         }
         SpinBox {
             id: meltdownTemperatureSpinBox
-            decimals: 1
             stepSize: 1
             minimumValue: 10
             maximumValue: 200

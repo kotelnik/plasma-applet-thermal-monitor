@@ -40,8 +40,8 @@ function initModels(savedSourceObjects, temperatureModel) {
             alias: savedSourceObj.alias,
             temperature: 0,
             overrideLimitTemperatures: savedSourceObj.overrideLimitTemperatures,
-            warningTemperature: savedSourceObj.overrideLimitTemperatures ? savedSourceObj.warningTemperature : plasmoid.configuration.warningTemperature,
-            meltdownTemperature: savedSourceObj.overrideLimitTemperatures ? savedSourceObj.meltdownTemperature : plasmoid.configuration.meltdownTemperature,
+            warningTemperature: savedSourceObj.overrideLimitTemperatures ? savedSourceObj.warningTemperature : baseWarningTemperature,
+            meltdownTemperature: savedSourceObj.overrideLimitTemperatures ? savedSourceObj.meltdownTemperature : baseMeltdownTemperature,
             virtual: savedSourceObj.virtual,
             childSourceObjects: savedSourceObj.childSourceObjects || {}
         }
