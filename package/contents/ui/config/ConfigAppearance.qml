@@ -23,7 +23,7 @@ Item {
         Slider {
             id: aliasFontSize
             stepSize: 1
-            minimumValue: 1
+            minimumValue: 2
             maximumValue: 100
             Layout.fillWidth: true
         }
@@ -35,7 +35,7 @@ Item {
         Slider {
             id: temperatureFontSize
             stepSize: 1
-            minimumValue: 1
+            minimumValue: 2
             maximumValue: 100
             Layout.fillWidth: true
         }
@@ -47,7 +47,7 @@ Item {
         Slider {
             id: iconFontSize
             stepSize: 1
-            minimumValue: 1
+            minimumValue: 2
             maximumValue: 100
             Layout.fillWidth: true
         }
