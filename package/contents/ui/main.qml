@@ -60,8 +60,8 @@ Item {
     
     property int numberOfParts: temperatureModel.count
     
-    property double parentWidth: parent.width
-    property double parentHeight: parent.height
+    property double parentWidth: parent !== null ? parent.width : 0
+    property double parentHeight: parent !== null ? parent.height : 0
     
     property double widgetWidth: 0
     property double widgetHeight: 0
