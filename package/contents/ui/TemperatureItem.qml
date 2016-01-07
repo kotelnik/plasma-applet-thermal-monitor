@@ -43,6 +43,7 @@ Item {
         
         color: meltdownState ? '#FFFF0000' : warningState ? '#FFFF8000' : '#FF66FF66'
         font.pixelSize: iconFontSize
+        font.pointSize: -1
         font.family: 'FontAwesome'
         verticalAlignment: Text.AlignBottom
         
@@ -58,6 +59,7 @@ Item {
             id: aliasText
             
             font.pixelSize: aliasFontSize
+            font.pointSize: -1
             verticalAlignment: Text.AlignTop
             
             text: alias
@@ -71,6 +73,7 @@ Item {
             anchors.rightMargin: temperatureRightMargin
             
             font.pixelSize: temperatureFontSize * (isOff ? 0.7 : 1)
+            font.pointSize: -1
             verticalAlignment: Text.AlignBottom
             
             opacity: isOff ? 0.7 : 1
