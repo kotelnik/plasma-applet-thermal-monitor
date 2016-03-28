@@ -4,7 +4,7 @@ import org.kde.plasma.configuration 2.0
 ConfigModel {
     ConfigCategory {
          name: i18n('Temperature')
-         icon: Qt.resolvedUrl('../images/thermal-monitor.svg')
+         icon: Qt.resolvedUrl('../images/thermal-monitor.svg').replace('file://', '')
          source: 'config/ConfigTemperatures.qml'
     }
     ConfigCategory {
