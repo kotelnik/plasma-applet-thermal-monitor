@@ -56,7 +56,7 @@ Item {
     property bool enableLabelDropShadow: plasmoid.configuration.enableLabelDropShadow
     
     property var systemmonitorAvailableSources: systemmonitorDS.sources
-    property var systemmonitorSourcesToAdd: []
+    property var systemmonitorSourcesToAdd
     
     property int numberOfParts: temperatureModel.count
     
