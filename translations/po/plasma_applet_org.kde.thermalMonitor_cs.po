@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/kotelnik/plasma-applet-thermal-"
 "monitor/issues\n"
-"POT-Creation-Date: 2016-04-05 18:53+0200\n"
+"POT-Creation-Date: 2016-04-05 19:01+0200\n"
 "PO-Revision-Date: 2016-04-05 18:38+0200\n"
 "Last-Translator: Martin Kotelnik <clearmartin@seznam.cz>\n"
 "Language-Team: Martin Kotelnik <clearmartin@seznam.cz>\n"
@@ -83,7 +83,7 @@ msgid "Edit Resource"
 msgstr "Upravit zdroj"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:222
-#: ../package/contents/ui/config/ConfigTemperatures.qml:365
+#: ../package/contents/ui/config/ConfigTemperatures.qml:371
 msgid "Source"
 msgstr "Zdroj"
 
@@ -106,32 +106,36 @@ msgid "Override limit temperatures"
 msgstr "Přetížit limitní teploty"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:315
-#: ../package/contents/ui/config/ConfigTemperatures.qml:482
+#: ../package/contents/ui/config/ConfigTemperatures.qml:488
 msgid "Warning temperature [°C]:"
 msgstr "Varovná teplota [°C]:"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:326
-#: ../package/contents/ui/config/ConfigTemperatures.qml:493
+#: ../package/contents/ui/config/ConfigTemperatures.qml:499
 msgid "Meltdown temperature [°C]:"
 msgstr "Nebezpečná teplota [°C]:"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:343
+msgid "Plasmoid version: "
+msgstr "Verze apletu: "
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:349
 msgid "Resources"
 msgstr "Zdroje"
 
-#: ../package/contents/ui/config/ConfigTemperatures.qml:358
+#: ../package/contents/ui/config/ConfigTemperatures.qml:364
 msgid "Add resources by clicking \"+\" button."
 msgstr "Přidejte zdroje kliknutím na tlačítko \"+\"."
 
-#: ../package/contents/ui/config/ConfigTemperatures.qml:386
+#: ../package/contents/ui/config/ConfigTemperatures.qml:392
 msgid "Alias"
 msgstr "Alias"
 
-#: ../package/contents/ui/config/ConfigTemperatures.qml:406
+#: ../package/contents/ui/config/ConfigTemperatures.qml:412
 msgid "Action"
 msgstr "Akce"
 
-#: ../package/contents/ui/config/ConfigTemperatures.qml:471
+#: ../package/contents/ui/config/ConfigTemperatures.qml:477
 msgid "Notifications"
 msgstr "Notifikace"
 

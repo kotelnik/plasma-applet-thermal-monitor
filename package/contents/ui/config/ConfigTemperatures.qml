@@ -340,6 +340,12 @@ Item {
         columns: 2
         
         Label {
+            text: i18n('Plasmoid version: ') + '1.2.7'
+            Layout.alignment: Qt.AlignRight
+            Layout.columnSpan: 2
+        }
+        
+        Label {
             text: i18n('Resources')
             font.bold: true
             Layout.alignment: Qt.AlignLeft
