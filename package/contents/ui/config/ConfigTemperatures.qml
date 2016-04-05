@@ -142,7 +142,7 @@ Item {
         property bool addResource: true
         property int editResourceIndex: -1
         
-        title: addResource ? 'Add Resource' : 'Edit Resource'
+        title: addResource ? i18n('Add Resource') : i18n('Edit Resource')
         
         width: tableWidth
         
@@ -312,7 +312,7 @@ Item {
             }
             
             Label {
-                text: i18n('Warning temperature:')
+                text: i18n('Warning temperature [°C]:')
                 Layout.alignment: Qt.AlignRight
             }
             SpinBox {
@@ -323,7 +323,7 @@ Item {
             }
             
             Label {
-                text: i18n('Meltdown temperature:')
+                text: i18n('Meltdown temperature [°C]:')
                 Layout.alignment: Qt.AlignRight
             }
             SpinBox {
@@ -362,7 +362,7 @@ Item {
             
             TableViewColumn {
                 role: 'sourceName'
-                title: 'Source'
+                title: i18n('Source')
                 width: tableWidth * 0.6
                 delegate: MouseArea {
                     anchors.fill: parent
@@ -383,7 +383,7 @@ Item {
             
             TableViewColumn {
                 role: 'alias'
-                title: 'Alias'
+                title: i18n('Alias')
                 width: tableWidth * 0.15
                 delegate: MouseArea {
                     anchors.fill: parent
@@ -403,7 +403,7 @@ Item {
             }
             
             TableViewColumn {
-                title: 'Action'
+                title: i18n('Action')
                 width: tableWidth * 0.25 - 4
                 
                 delegate: Item {

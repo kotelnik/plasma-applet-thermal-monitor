@@ -77,7 +77,7 @@ Item {
             verticalAlignment: Text.AlignBottom
             
             opacity: isOff ? 0.7 : 1
-            text: isOff ? 'OFF' : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
+            text: isOff ? i18n('OFF') : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
         }
     }
     

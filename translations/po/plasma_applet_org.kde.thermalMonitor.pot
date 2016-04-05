@@ -1,0 +1,142 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: https://github.com/kotelnik/plasma-applet-thermal-monitor/issues\n"
+"POT-Creation-Date: 2016-04-05 18:53+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../package/contents/config/config.qml:6
+msgid "Temperature"
+msgstr ""
+
+#: ../package/contents/config/config.qml:11
+msgid "Appearance"
+msgstr ""
+
+#: ../package/contents/config/config.qml:16
+msgid "Misc"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigAppearance.qml:20
+msgid "Alias font size:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigAppearance.qml:32
+msgid "Temperature font size:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigAppearance.qml:44
+msgid "Icon font size:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigAppearance.qml:56
+msgid "Temperature right margin:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigAppearance.qml:68
+msgid "Notification icon bottom margin:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigAppearance.qml:88
+msgid "Enable label drop shadow"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigMisc.qml:32
+msgid "Update interval:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigMisc.qml:40
+msgctxt "Abbreviation for seconds"
+msgid "s"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigMisc.qml:50
+msgid "Temperature:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigMisc.qml:56
+msgid "°C"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigMisc.qml:67
+msgid "°F"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:145
+msgid "Add Resource"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:145
+msgid "Edit Resource"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:222
+#: ../package/contents/ui/config/ConfigTemperatures.qml:365
+msgid "Source"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:241
+msgid "Group of sources"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:281
+msgid "NOTE: Group of sources shows the highest temperature of chosen sources."
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:293
+msgid "Alias:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:309
+msgid "Override limit temperatures"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:315
+#: ../package/contents/ui/config/ConfigTemperatures.qml:482
+msgid "Warning temperature [°C]:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:326
+#: ../package/contents/ui/config/ConfigTemperatures.qml:493
+msgid "Meltdown temperature [°C]:"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:343
+msgid "Resources"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:358
+msgid "Add resources by clicking \"+\" button."
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:386
+msgid "Alias"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:406
+msgid "Action"
+msgstr ""
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:471
+msgid "Notifications"
+msgstr ""
+
+#: ../package/contents/ui/main.qml:148
+msgid "Reload Temperature Sources"
+msgstr ""
+
+#: ../package/contents/ui/TemperatureItem.qml:80
+msgid "OFF"
+msgstr ""
