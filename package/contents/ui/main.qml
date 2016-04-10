@@ -55,7 +55,7 @@ Item {
     property double iconBottomMargin: itemHeight * plasmoid.configuration.iconBottomMargin * 0.01
     property bool enableLabelDropShadow: plasmoid.configuration.enableLabelDropShadow
     
-    property var systemmonitorAvailableSources: systemmonitorDS.sources
+    property var systemmonitorAvailableSources
     property var systemmonitorSourcesToAdd
     
     property int numberOfParts: temperatureModel.count
@@ -171,6 +171,13 @@ Item {
         reloadAllSources()
     }
     
+    function getSystemmonitorAvailableSources() {
+        if (!systemmonitorAvailableSources) {
+            systemmonitorAvailableSources = systemmonitorDS.sources
+        }
+        return systemmonitorAvailableSources
+    }
+    
     function action_reloadSources() {
         reloadAllSources()
     }
@@ -185,6 +192,18 @@ Item {
         
         if (!systemmonitorSourcesToAdd) {
             systemmonitorSourcesToAdd = []
+        }
+        
+        if (systemmonitorDS.connectedSources === undefined) {
+            systemmonitorDS.connectedSources = []
+        }
+        
+        if (udisksDS.connectedSources === undefined) {
+            udisksDS.connectedSources = []
+        }
+        
+        if (nvidiaDS.connectedSources === undefined) {
+            nvidiaDS.connectedSources = []
         }
         
         systemmonitorSourcesToAdd.length = 0
@@ -247,7 +266,7 @@ Item {
             
             dbgprint('adding source to systemmonitorDS: ' + source)
             
-            if (systemmonitorAvailableSources && systemmonitorAvailableSources.indexOf(source) > -1) {
+            if (getSystemmonitorAvailableSources().indexOf(source) > -1) {
                 dbgprint('adding to connected')
                 addToSourcesOfDatasource(systemmonitorDS, source)
             } else {
@@ -275,8 +294,6 @@ Item {
         property string lmSensorsStart: 'lmsensors/'
         property string acpiStart: 'acpi/Thermal_Zone/'
 
-        connectedSources: []
-        
         onSourceAdded: {
             
             if (source.indexOf(lmSensorsStart) === 0 || source.indexOf(acpiStart) === 0) {
@@ -308,9 +325,7 @@ Item {
         id: udisksDS
         engine: 'executable'
         
-        property variant cmdSourceBySourceName: {}
-        
-        connectedSources: []
+        property var cmdSourceBySourceName
         
         onNewData: {
             
@@ -334,8 +349,6 @@ Item {
         
         property string nvidiaSource: 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader'
 
-        connectedSources: []
-        
         onNewData: {
             var temperature = 0
             if (data['exit code'] > 0) {
