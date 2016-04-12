@@ -1,7 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Thermal Monitor
+Name[sr]=Праћење температуре
+Name[sr@ijekavian]=Праћење температуре
+Name[sr@ijekavianlatin]=Praćenje temperature
+Name[sr@latin]=Praćenje temperature
 Comment=Plasmoid for monitoring CPU, GPU and HDD temperature.
+Comment[sr]=Плазмоид за праћење температуре ЦПУ-а, ГПУ-а и тврдог диска. 
+Comment[sr@ijekavian]=Плазмоид за праћење температуре ЦПУ-а, ГПУ-а и тврдог диска. 
+Comment[sr@ijekavianlatin]=Plazmoid za praćenje temperature CPU-a, GPU-a i tvrdog diska.
+Comment[sr@latin]=Plazmoid za praćenje temperature CPU-a, GPU-a i tvrdog diska.
 Type=Service
 X-KDE-ParentApp=
 X-KDE-PluginInfo-Author=Kotelnik
