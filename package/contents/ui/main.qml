@@ -33,7 +33,7 @@ Item {
     property bool initialized: false
     
     // configuration
-    property bool fahrenheitEnabled: plasmoid.configuration.fahrenheitEnabled
+    property string temperatureUnit: plasmoid.configuration.temperatureUnit
     property string configuredResources: plasmoid.configuration.resources
     property int baseWarningTemperature: plasmoid.configuration.warningTemperature
     property int baseMeltdownTemperature: plasmoid.configuration.meltdownTemperature

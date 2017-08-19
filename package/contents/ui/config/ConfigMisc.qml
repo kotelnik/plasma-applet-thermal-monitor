@@ -6,18 +6,24 @@ Item {
     
     property alias cfg_updateInterval: updateIntervalSpinBox.value
     
-    property bool cfg_fahrenheitEnabled
+    property string cfg_temperatureUnit
 
-    onCfg_fahrenheitEnabledChanged: {
-        if (cfg_fahrenheitEnabled) {
-            temperatureTypeGroup.current = temperatureFahrenheit
-        } else {
+    onCfg_temperatureUnitChanged: {
+
+        if (cfg_temperatureUnit == "°C") {
             temperatureTypeGroup.current = temperatureCelsius
         }
+        else if (cfg_temperatureUnit == "°F") {
+            temperatureTypeGroup.current = temperatureFahrenheit
+        }
+        else {
+            temperatureTypeGroup.current = temperatureKelvin
+        }
     }
-    
+
+
     Component.onCompleted: {
-        cfg_fahrenheitEnabledChanged()
+        cfg_temperatureUnitChanged()
     }
     
     ExclusiveGroup {
@@ -54,7 +60,7 @@ Item {
             id: temperatureCelsius
             exclusiveGroup: temperatureTypeGroup
             text: i18n("°C")
-            onCheckedChanged: if (checked) cfg_fahrenheitEnabled = false
+            onCheckedChanged: if (checked) cfg_temperatureUnit = "°C"
         }
         Item {
             width: 2
@@ -65,9 +71,20 @@ Item {
             id: temperatureFahrenheit
             exclusiveGroup: temperatureTypeGroup
             text: i18n("°F")
-            onCheckedChanged: if (checked) cfg_fahrenheitEnabled = true
+            onCheckedChanged: if (checked) cfg_temperatureUnit = "°F"
+        }
+	Item {
+            width: 2
+            height: 2
+            Layout.rowSpan: 1
+        }
+        RadioButton {
+            id: temperatureKelvin
+            exclusiveGroup: temperatureTypeGroup
+            text: i18n("K")
+            onCheckedChanged: if (checked) cfg_temperatureUnit = "K"
         }
 
     }
-    
+
 }

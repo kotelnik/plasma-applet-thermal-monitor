@@ -77,7 +77,16 @@ Item {
             verticalAlignment: Text.AlignBottom
             
             opacity: isOff ? 0.7 : 1
-            text: isOff ? i18n('OFF') : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
+
+            text: {
+                if (isOff)
+                    return i18n('OFF')
+                else if (temperatureUnit == "K")
+                    return TemperatureUtils.getTemperature(temperature, temperatureUnit)
+                else
+                    return TemperatureUtils.getTemperature(temperature, temperatureUnit) + '°'
+            }
+
         }
     }
     
