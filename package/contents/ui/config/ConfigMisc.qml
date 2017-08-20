@@ -3,21 +3,23 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 
 Item {
-    
+
     property alias cfg_updateInterval: updateIntervalSpinBox.value
-    
-    property string cfg_temperatureUnit
+
+    property int cfg_temperatureUnit
 
     onCfg_temperatureUnitChanged: {
-
-        if (cfg_temperatureUnit == "°C") {
-            temperatureTypeGroup.current = temperatureCelsius
-        }
-        else if (cfg_temperatureUnit == "°F") {
-            temperatureTypeGroup.current = temperatureFahrenheit
-        }
-        else {
-            temperatureTypeGroup.current = temperatureKelvin
+        switch (cfg_temperatureUnit) {
+        case 0:
+            temperatureTypeGroup.current = temperatureTypeRadioCelsius;
+            break;
+        case 1:
+            temperatureTypeGroup.current = temperatureTypeRadioFahrenheit;
+            break;
+        case 2:
+            temperatureTypeGroup.current = temperatureTypeRadioKelvin;
+            break;
+        default:
         }
     }
 
@@ -25,7 +27,7 @@ Item {
     Component.onCompleted: {
         cfg_temperatureUnitChanged()
     }
-    
+
     ExclusiveGroup {
         id: temperatureTypeGroup
     }
@@ -33,7 +35,7 @@ Item {
     GridLayout {
         Layout.fillWidth: true
         columns: 2
-        
+
         Label {
             text: i18n('Update interval:')
             Layout.alignment: Qt.AlignRight
@@ -45,22 +47,22 @@ Item {
             minimumValue: 0.1
             suffix: i18nc('Abbreviation for seconds', 's')
         }
-        
+
         Item {
             width: 2
             height: 10
             Layout.columnSpan: 2
         }
-        
+
         Label {
             text: i18n("Temperature:")
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
         }
         RadioButton {
-            id: temperatureCelsius
+            id: temperatureTypeRadioCelsius
             exclusiveGroup: temperatureTypeGroup
             text: i18n("°C")
-            onCheckedChanged: if (checked) cfg_temperatureUnit = "°C"
+            onCheckedChanged: if (checked) cfg_temperatureUnit = 0
         }
         Item {
             width: 2
@@ -68,21 +70,21 @@ Item {
             Layout.rowSpan: 1
         }
         RadioButton {
-            id: temperatureFahrenheit
+            id: temperatureTypeRadioFahrenheit
             exclusiveGroup: temperatureTypeGroup
             text: i18n("°F")
-            onCheckedChanged: if (checked) cfg_temperatureUnit = "°F"
+            onCheckedChanged: if (checked) cfg_temperatureUnit = 1
         }
-	Item {
+        Item {
             width: 2
             height: 2
             Layout.rowSpan: 1
         }
         RadioButton {
-            id: temperatureKelvin
+            id: temperatureTypeRadioKelvin
             exclusiveGroup: temperatureTypeGroup
             text: i18n("K")
-            onCheckedChanged: if (checked) cfg_temperatureUnit = "K"
+            onCheckedChanged: if (checked) cfg_temperatureUnit = 2
         }
 
     }

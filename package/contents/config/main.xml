@@ -16,7 +16,7 @@
             <default>90</default>
         </entry>
     </group>
-    
+
     <group name="Appearance">
         <entry name="aliasFontSize" type="Int">
             <default>27</default>
@@ -37,14 +37,19 @@
             <default>false</default>
         </entry>
     </group>
-    
+
     <group name="Misc">
         <entry name="updateInterval" type="Double">
             <default>3.0</default>
         </entry>
-	<entry name="temperatureUnit" type="String">
-	  <default>°C</default>
-	</entry>
+        <entry name="temperatureUnit" type="Enum">
+            <choices>
+                <choice name="celsius"/>
+                <choice name="fahrenheit"/>
+                <choice name="kelvin"/>
+            </choices>
+            <default>0</default>
+        </entry>
     </group>
     
 </kcfg>
