@@ -206,11 +206,16 @@ Item {
             nvidiaDS.connectedSources = []
         }
 
+        if (atiDS.connectedSources === undefined) {
+            atiDS.connectedSources = []
+        }
+
         systemmonitorSourcesToAdd.length = 0
         systemmonitorDS.connectedSources.length = 0
         udisksDS.connectedSources.length = 0
         udisksDS.cmdSourceBySourceName = {}
         nvidiaDS.connectedSources.length = 0
+        atiDS.connectedSources.length = 0
 
         ModelUtils.initModels(resources, temperatureModel)
 
@@ -261,6 +266,12 @@ Item {
             dbgprint('adding source to nvidiaDS')
 
             addToSourcesOfDatasource(nvidiaDS, nvidiaDS.nvidiaSource)
+
+        } else if (source.indexOf('aticonfig') === 0 && atiDS.connectedSources.length === 0) {
+
+            dbgprint('adding source to atiDS')
+
+            addToSourcesOfDatasource(atiDS, atiDS.atiSource)
 
         } else {
 
@@ -358,6 +369,25 @@ Item {
             }
 
             ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', temperature)
+        }
+        interval: updateInterval
+    }
+
+    PlasmaCore.DataSource {
+        id: atiDS
+        engine: 'executable'
+
+        property string atiSource: 'aticonfig --od-gettemperature | tail -1 | cut -c 43-44'
+
+        onNewData: {
+            var temperature = 0
+            if (data['exit code'] > 0) {
+                dbgprint('new data error: ' + data.stderr)
+            } else {
+                temperature = parseFloat(data.stdout)
+            }
+
+            ModelUtils.updateTemperatureModel(temperatureModel, 'aticonfig', temperature)
         }
         interval: updateInterval
     }
