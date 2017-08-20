@@ -22,10 +22,10 @@ import "../code/temperature-utils.js" as TemperatureUtils
 
 Item {
     id: temperatureItem
-    
+
     width: itemWidth
     height: itemHeight
-    
+
     //
     // all temperatures defaults to Celsius
     // Fahrenheit is being computed while putting int string for display
@@ -33,54 +33,55 @@ Item {
     property bool warningState: temperature >= warningTemperature
     property bool meltdownState: temperature >= meltdownTemperature
     property bool isOff: temperature === 0
-    
+
     PlasmaComponents.Label {
         id: stateIcon
-        
+
         anchors.bottom: parent.bottom
         anchors.bottomMargin: iconBottomMargin
         anchors.right: parent.right
-        
+
         color: meltdownState ? '#FFFF0000' : warningState ? '#FFFF8000' : '#FF66FF66'
         font.pixelSize: iconFontSize
         font.pointSize: -1
         font.family: 'FontAwesome'
         verticalAlignment: Text.AlignBottom
-        
+
         text: meltdownState ? '\uf06d' : (warningState ? '\uf071' : '\uf05d')
         visible: meltdownState || warningState
     }
-    
+
     Item {
         id: labels
         anchors.fill: parent
-        
+
         PlasmaComponents.Label {
             id: aliasText
-            
+
             font.pixelSize: aliasFontSize
             font.pointSize: -1
             verticalAlignment: Text.AlignTop
-            
+
             text: alias
         }
-        
+
         PlasmaComponents.Label {
             id: temperatureText
-            
+
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: temperatureRightMargin
-            
+
             font.pixelSize: temperatureFontSize * (isOff ? 0.7 : 1)
             font.pointSize: -1
             verticalAlignment: Text.AlignBottom
-            
+
             opacity: isOff ? 0.7 : 1
-            text: isOff ? i18n('OFF') : TemperatureUtils.getTemperature(temperature, fahrenheitEnabled) + '°'
+
+            text: isOff ? i18n('OFF') : TemperatureUtils.getTemperatureStr(temperature, temperatureUnit)
         }
     }
-    
+
     DropShadow {
         anchors.fill: labels
         radius: enableLabelDropShadow ? 3 : 0
@@ -90,5 +91,5 @@ Item {
         source: labels
         visible: enableLabelDropShadow
     }
-    
+
 }
