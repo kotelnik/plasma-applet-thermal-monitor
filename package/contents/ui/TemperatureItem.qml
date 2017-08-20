@@ -68,9 +68,10 @@ Item {
         PlasmaComponents.Label {
             id: temperatureText
 
-            anchors.bottom: parent.bottom
+            anchors.bottom: aliasText.text === '' ? undefined : parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: temperatureRightMargin
+            anchors.verticalCenter: aliasText.text === '' ? parent.verticalCenter : undefined
 
             font.pixelSize: temperatureFontSize * (isOff ? 0.7 : 1)
             font.pointSize: -1

@@ -124,6 +124,7 @@ Item {
         
         // alias
         aliasTextfield.text = temperatureObj.alias
+        showAlias.checked = !!temperatureObj.alias
         
         // temperature overrides
         overrideLimitTemperatures.checked = temperatureObj.overrideLimitTemperatures
@@ -180,7 +181,9 @@ Item {
         }
         
         onAccepted: {
-            if (!aliasTextfield.text) {
+            if (!showAlias.checked) {
+                aliasTextfield.text = ''
+            } else if (!aliasTextfield.text) {
                 aliasTextfield.text = '<UNKNOWN>'
             }
             
@@ -289,13 +292,16 @@ Item {
                 height: 10
             }
             
-            Label {
-                text: i18n('Alias:')
+            CheckBox {
+                id: showAlias
+                text: i18n("Show alias:")
+                checked: true
                 Layout.alignment: Qt.AlignRight
             }
             TextField {
                 id: aliasTextfield
                 Layout.preferredWidth: tableWidth/2
+                enabled: showAlias.checked
             }
             
             Item {
