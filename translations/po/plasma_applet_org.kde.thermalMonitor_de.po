@@ -100,8 +100,8 @@ msgid "NOTE: Group of sources shows the highest temperature of chosen sources."
 msgstr "HINWEIS: Wenn Sensoren zusammengefasst werden, wird die höchste Temperatur der gewählten Sensoren angezeigt."
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:297
-msgid "Alias:"
-msgstr "Anzeigename:"
+msgid "Show Alias:"
+msgstr "Anzeigename anzeigen:"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:315
 msgid "Override limit temperatures"
