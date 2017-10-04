@@ -13,7 +13,7 @@ function toKelvin(celsia) {
 }
 
 function getTemperatureStr(celsiaDouble, temperatureUnit) {
-    print('temp unit: ' + temperatureUnit)
+    dbgprint('temp unit: ' + temperatureUnit)
     return getTemperature(celsiaDouble, temperatureUnit) + (temperatureUnit === TemperatureUnit.CELSIUS || temperatureUnit === TemperatureUnit.FAHRENHEIT ? '°' : '')
 }
 
