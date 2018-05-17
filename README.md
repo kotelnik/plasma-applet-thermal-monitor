@@ -1,5 +1,5 @@
-# Thermal Monitor
-
+Thermal Monitor
+---------------
 Plasma 5 applet for monitoring CPU, GPU and other available temperature sensors.
 
 ### INSTALLATION
@@ -13,7 +13,7 @@ $ cmake .. -DCMAKE_INSTALL_PREFIX=/usr
 $ sudo make install
 ```
 
-### UNINSTALATION
+### UNINSTALLATION
 
 ```sh
 $ cd plasma-applet-thermal-monitor/build/
