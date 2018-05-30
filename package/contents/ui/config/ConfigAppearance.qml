@@ -1,5 +1,5 @@
 import QtQuick 2.2
-import QtQuick.Controls 1.3
+import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.1
 
 Item {
@@ -14,66 +14,60 @@ Item {
     GridLayout {
         columns: 2
         anchors.left: parent.left
-        anchors.right: parent.right
         
         Label {
             text: i18n('Alias font size:')
             Layout.alignment: Qt.AlignRight
         }
-        Slider {
+        SpinBox {
             id: aliasFontSize
             stepSize: 1
-            minimumValue: 2
-            maximumValue: 100
-            Layout.fillWidth: true
+            from: 2
+            to: 100
         }
         
         Label {
             text: i18n('Temperature font size:')
             Layout.alignment: Qt.AlignRight
         }
-        Slider {
+        SpinBox {
             id: temperatureFontSize
             stepSize: 1
-            minimumValue: 2
-            maximumValue: 100
-            Layout.fillWidth: true
+            from: 2
+            to: 100
         }
         
         Label {
             text: i18n('Icon font size:')
             Layout.alignment: Qt.AlignRight
         }
-        Slider {
+        SpinBox {
             id: iconFontSize
             stepSize: 1
-            minimumValue: 2
-            maximumValue: 100
-            Layout.fillWidth: true
+            from: 2
+            to: 100
         }
 
         Label {
             text: i18n('Temperature right margin:')
             Layout.alignment: Qt.AlignRight
         }
-        Slider {
+        SpinBox {
             id: temperatureRightMargin
             stepSize: 1
-            minimumValue: 0
-            maximumValue: 80
-            Layout.fillWidth: true
+            from: 0
+            to: 80
         }
         
         Label {
             text: i18n('Notification icon bottom margin:')
             Layout.alignment: Qt.AlignRight
         }
-        Slider {
+        SpinBox {
             id: iconBottomMargin
             stepSize: 1
-            minimumValue: 0
-            maximumValue: 100
-            Layout.fillWidth: true
+            from: 0
+            to: 100
         }
         
         Item {
