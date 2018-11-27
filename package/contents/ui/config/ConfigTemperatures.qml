@@ -514,12 +514,6 @@ Item {
         
     }
    
-   
-   
-   
-   
-   
-   
     PlasmaCore.DataSource {
         id: systemmonitorDS
         engine: 'systemmonitor'
@@ -543,7 +537,6 @@ Item {
             
             var pathsToCheck = ModelUtils.parseUdisksPaths(data.stdout)
             pathsToCheck.forEach(function (pathObj) {
-
                 var cmd = ModelUtils.UDISKS_VIRTUAL_PATH_PREFIX + pathObj.name
                 comboboxModel.append({
                     text: cmd,

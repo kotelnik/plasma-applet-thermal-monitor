@@ -216,7 +216,6 @@ Item {
         udisksDS.cmdSourceBySourceName = {}
         nvidiaDS.connectedSources.length = 0
         nvidiaDS.cmdSourceBySourceName = {}
-        
         atiDS.connectedSources.length = 0
 
         ModelUtils.initModels(resources, temperatureModel)
@@ -260,7 +259,6 @@ Item {
             udisksDS.cmdSourceBySourceName[cmdSource] = source
 
             dbgprint('adding source to udisksDS: ' + cmdSource)
-            //print("udisks cmd source added, cmd=" + cmdSource)
 
             addToSourcesOfDatasource(udisksDS, cmdSource)
 
@@ -274,7 +272,6 @@ Item {
             dbgprint('adding source to nvidiaDS: ' + cmdSource)
 
             addToSourcesOfDatasource(nvidiaDS, cmdSource)
-            //print("Nvidia-smi cmd source added, cmd=" + cmdSource)
 
         }
         else if (source.indexOf('aticonfig') === 0 && atiDS.connectedSources.length === 0) {
@@ -386,8 +383,6 @@ Item {
         }
         interval: updateInterval
     }
-    
-   
     
     PlasmaCore.DataSource {
         id: atiDS

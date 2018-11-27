@@ -146,7 +146,6 @@ var UDISKS_PATH_START_WITH = '/org/freedesktop/UDisks2/drives/'
 var UDISKS_DEVICES_CMD = 'qdbus --system org.freedesktop.UDisks2 | grep ' + UDISKS_PATH_START_WITH
 var UDISKS_TEMPERATURE_CMD_PATTERN = 'qdbus --system org.freedesktop.UDisks2 {path} org.freedesktop.UDisks2.Drive.Ata.SmartTemperature'
 
-
 function parseUdisksPaths(udisksPaths) {
     var deviceStrings = udisksPaths.split('\n')
     var resultObjects = []
@@ -177,7 +176,9 @@ function getCelsiaFromUdisksStdout(stdout) {
     return Math.round(toCelsia(temperature))
 }
 
-
+function toCelsia(kelvin) {
+    return kelvin - 273.15
+}
 
 var NVIDIA_PREFIX = 'nvidia-smi -i {ID}'
 var NVIDIA_DEVICES_CMD = 'nvidia-smi -L | grep -o -E "GPU .{0,1}" | sed -n -e "s/^.*GPU //p"' 
@@ -208,12 +209,4 @@ function getNvidiaTemperatureCmd(gpu_id) {
 
 function getNvidiaTemperaturePrefix(gpu_id) {
     return NVIDIA_PREFIX.replace('{ID}', gpu_id)
-}
-
-
-
-
-
-function toCelsia(kelvin) {
-    return kelvin - 273.15
 }
