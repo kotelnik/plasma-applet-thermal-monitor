@@ -513,7 +513,13 @@ Item {
         }
         
     }
-    
+   
+   
+   
+   
+   
+   
+   
     PlasmaCore.DataSource {
         id: systemmonitorDS
         engine: 'systemmonitor'
@@ -537,11 +543,14 @@ Item {
             
             var pathsToCheck = ModelUtils.parseUdisksPaths(data.stdout)
             pathsToCheck.forEach(function (pathObj) {
+
                 var cmd = ModelUtils.UDISKS_VIRTUAL_PATH_PREFIX + pathObj.name
                 comboboxModel.append({
                     text: cmd,
                     val: cmd
                 })
+                print('New udisksDS cmd=' + cmd);
+
             })
             
         }
@@ -553,24 +562,30 @@ Item {
         id: nvidiaDS
         engine: 'executable'
         
-        connectedSources: [ 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader' ]
+        connectedSources: [ ModelUtils.NVIDIA_DEVICES_CMD ]
         
         property bool prepared: false
         
         onNewData: {
-            nvidiaDS.connectedSources.length = 0
+            connectedSources.length = 0
             
             if (data['exit code'] > 0) {
+                print('New data incomming. Source: ' + sourceName + ', ERROR: ' + data.stderr);
                 prepared = true
                 return
             }
-            
-            comboboxModel.append({
-                text: 'nvidia-smi',
-                val: 'nvidia-smi'
+            print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
+
+            var idsToCheck = ModelUtils.parseGpuID(data.stdout)
+            idsToCheck.forEach(function (id) {
+                var cmd = ModelUtils.NVIDIA_TEMPERATURE_CMD_PATTERN.replace('{ID}',  id.name)
+                comboboxModel.append({
+                    text: "nvidia-gpu-{ID}".replace('{ID}', id.name),
+                    val: cmd,
+                })
+                print('New gpu cmd=' + cmd);
             })
             
-            prepared = true
         }
         
         interval: 500

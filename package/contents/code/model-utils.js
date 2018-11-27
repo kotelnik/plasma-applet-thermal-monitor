@@ -146,6 +146,7 @@ var UDISKS_PATH_START_WITH = '/org/freedesktop/UDisks2/drives/'
 var UDISKS_DEVICES_CMD = 'qdbus --system org.freedesktop.UDisks2 | grep ' + UDISKS_PATH_START_WITH
 var UDISKS_TEMPERATURE_CMD_PATTERN = 'qdbus --system org.freedesktop.UDisks2 {path} org.freedesktop.UDisks2.Drive.Ata.SmartTemperature'
 
+
 function parseUdisksPaths(udisksPaths) {
     var deviceStrings = udisksPaths.split('\n')
     var resultObjects = []
@@ -175,6 +176,43 @@ function getCelsiaFromUdisksStdout(stdout) {
     }
     return Math.round(toCelsia(temperature))
 }
+
+
+
+var NVIDIA_PREFIX = 'nvidia-smi -i {ID}'
+var NVIDIA_DEVICES_CMD = 'nvidia-smi -L | grep -o -E "GPU .{0,1}" | sed -n -e "s/^.*GPU //p"' 
+var NVIDIA_TEMPERATURE_CMD_PATTERN = 'nvidia-smi -i {ID} --query-gpu=temperature.gpu --format=csv,noheader'
+
+function parseGpuID(gpu_ids) {
+    var deviceIds = gpu_ids.split('\n')
+    var resultObjects = []
+    
+    if (deviceIds) {
+        deviceIds.forEach(function (id) {
+            if (id) {
+                resultObjects.push({
+                    cmd: NVIDIA_TEMPERATURE_CMD_PATTERN.replace('{ID}', id),
+                    name: id
+                })
+            }
+        })
+    }
+    
+    return resultObjects
+}
+
+
+function getNvidiaTemperatureCmd(gpu_id) {
+    return NVIDIA_TEMPERATURE_CMD_PATTERN.replace('{ID}', gpu_id)
+}
+
+function getNvidiaTemperaturePrefix(gpu_id) {
+    return NVIDIA_PREFIX.replace('{ID}', gpu_id)
+}
+
+
+
+
 
 function toCelsia(kelvin) {
     return kelvin - 273.15
