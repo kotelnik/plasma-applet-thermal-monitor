@@ -205,7 +205,7 @@ Item {
         if (nvidiaDS.connectedSources === undefined) {
             nvidiaDS.connectedSources = []
         }
-
+        
         if (atiDS.connectedSources === undefined) {
             atiDS.connectedSources = []
         }
@@ -215,6 +215,7 @@ Item {
         udisksDS.connectedSources.length = 0
         udisksDS.cmdSourceBySourceName = {}
         nvidiaDS.connectedSources.length = 0
+        nvidiaDS.cmdSourceBySourceName = {}
         atiDS.connectedSources.length = 0
 
         ModelUtils.initModels(resources, temperatureModel)
@@ -261,13 +262,19 @@ Item {
 
             addToSourcesOfDatasource(udisksDS, cmdSource)
 
-        } else if (source.indexOf('nvidia-') === 0 && nvidiaDS.connectedSources.length === 0) {
+        }
 
-            dbgprint('adding source to nvidiaDS')
+        else if (source.indexOf('nvidia-smi -i ') === 0) {
+            var gpu_id = source.substring('nvidia-smi -i '.length)
+            var cmdSource = ModelUtils.getNvidiaTemperaturePrefix(gpu_id)
+            nvidiaDS.cmdSourceBySourceName[cmdSource] = source
 
-            addToSourcesOfDatasource(nvidiaDS, nvidiaDS.nvidiaSource)
+            dbgprint('adding source to nvidiaDS: ' + cmdSource)
 
-        } else if (source.indexOf('aticonfig') === 0 && atiDS.connectedSources.length === 0) {
+            addToSourcesOfDatasource(nvidiaDS, cmdSource)
+
+        }
+        else if (source.indexOf('aticonfig') === 0 && atiDS.connectedSources.length === 0) {
 
             dbgprint('adding source to atiDS')
 
@@ -357,10 +364,14 @@ Item {
     PlasmaCore.DataSource {
         id: nvidiaDS
         engine: 'executable'
+        property var cmdSourceBySourceName
 
-        property string nvidiaSource: 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader'
+        //property string nvidiaSource: 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader'
 
         onNewData: {
+            
+            dbgprint('nvidia new data - valid: ' + valid + ', stdout: ' + data.stdout)
+
             var temperature = 0
             if (data['exit code'] > 0) {
                 dbgprint('new data error: ' + data.stderr)
@@ -368,11 +379,11 @@ Item {
                 temperature = parseFloat(data.stdout)
             }
 
-            ModelUtils.updateTemperatureModel(temperatureModel, 'nvidia-smi', temperature)
+            ModelUtils.updateTemperatureModel(temperatureModel, cmdSourceBySourceName[sourceName], temperature)
         }
         interval: updateInterval
     }
-
+    
     PlasmaCore.DataSource {
         id: atiDS
         engine: 'executable'
