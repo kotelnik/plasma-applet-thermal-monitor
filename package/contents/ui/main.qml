@@ -190,6 +190,10 @@ Item {
 
         temperatureModel.clear()
 
+        if (!systemmonitorAvailableSources) {
+            systemmonitorAvailableSources = []
+        }
+
         if (!systemmonitorSourcesToAdd) {
             systemmonitorSourcesToAdd = []
         }
