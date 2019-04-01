@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"Report-Msgid-Bugs-To: https://github.com/scpketer/plasma-applet-thermal-monitor/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/roachsinai/plasma-applet-thermal-monitor/issues\n"
 "POT-Creation-Date: 2016-04-05 19:01+0200\n"
 "PO-Revision-Date: 2016-04-05 19:39+0100\n"
 "Last-Translator: Herman Semin <scpketer3@gmail.com>\n"
