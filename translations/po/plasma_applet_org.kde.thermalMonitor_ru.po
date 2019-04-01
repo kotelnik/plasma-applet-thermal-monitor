@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"Report-Msgid-Bugs-To: https://github.com/kotelnik/plasma-applet-thermal-monitor/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/scpketer/plasma-applet-thermal-monitor/issues\n"
 "POT-Creation-Date: 2016-04-05 19:01+0200\n"
 "PO-Revision-Date: 2016-04-05 19:39+0100\n"
-"Last-Translator: Bilyak Alexander <bilyak.alexander@gmail.com>\n"
+"Last-Translator: Herman Semin <scpketer3@gmail.com>\n"
 "Language-Team: Bilyak Alexander <bilyak.alexander@gmail.com>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgstr "Изображение - отступ снизу:"
 
 #: ../package/contents/ui/config/ConfigAppearance.qml:88
 msgid "Enable label drop shadow"
-msgstr "Включить тень подписи"
+msgstr "Включить тень подписей"
 
 #: ../package/contents/ui/config/ConfigMisc.qml:32
 msgid "Update interval:"
@@ -90,11 +90,15 @@ msgstr "Источник"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:241
 msgid "Group of sources"
-msgstr "Группа"
+msgstr "Группа источников"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:281
 msgid "NOTE: Group of sources shows the highest temperature of chosen sources."
-msgstr "Прим.: Группа показывает наивысшую температуру из выбранных источников."
+msgstr "Примечание: Группа показывает наибольшую температуру из выбранных источников."
+
+#: ../package/contents/ui/config/ConfigTemperatures.qml:297
+msgid "Show alias:"
+msgstr "Показывать подпись:"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:293
 msgid "Alias:"
@@ -107,7 +111,7 @@ msgstr "Особые лимиты температуры"
 #: ../package/contents/ui/config/ConfigTemperatures.qml:315
 #: ../package/contents/ui/config/ConfigTemperatures.qml:488
 msgid "Warning temperature [°C]:"
-msgstr "Внимание [°C]:"
+msgstr "Предупреждение [°C]:"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:326
 #: ../package/contents/ui/config/ConfigTemperatures.qml:499
@@ -116,7 +120,7 @@ msgstr "Перегрев [°C]:"
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:343
 msgid "Plasmoid version: "
-msgstr "Версия плазмоида:"
+msgstr "Версия плазмоида: "
 
 #: ../package/contents/ui/config/ConfigTemperatures.qml:349
 msgid "Resources"
