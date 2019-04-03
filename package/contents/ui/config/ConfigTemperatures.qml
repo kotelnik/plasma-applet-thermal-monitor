@@ -325,6 +325,7 @@ Item {
                 id: warningTemperatureItem
                 stepSize: 10
                 minimumValue: 10
+                maximumValue: 200
                 enabled: overrideLimitTemperatures.checked
             }
             
@@ -336,6 +337,7 @@ Item {
                 id: meltdownTemperatureItem
                 stepSize: 10
                 minimumValue: 10
+                maximumValue: 200
                 enabled: overrideLimitTemperatures.checked
             }
             
