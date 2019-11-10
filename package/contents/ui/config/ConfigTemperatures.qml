@@ -548,7 +548,38 @@ Item {
         
         interval: 500
     }
-    
+
+    PlasmaCore.DataSource {
+        id: nvmeDS
+        engine: 'executable'
+
+        connectedSources: ['sudo nvme list -o json | jq -r ".Devices | map(.DevicePath)"']
+
+        onNewData: {
+            connectedSources.length = 0
+
+            if (data['exit code'] > 0) {
+                print('New data incomming. Source: ' + sourceName + ', ERROR: ' + data.stderr);
+                return
+            }
+
+            print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
+
+            var pathsToCheck = ModelUtils.parseNvmePaths(data.stdout)
+            pathsToCheck.forEach(function (pathObj) {
+                var cmd = ModelUtils.NVME_VIRTUAL_PATH_PREFIX + pathObj.name
+                comboboxModel.append({
+                    text: cmd,
+                    val: cmd
+                })
+            })
+
+        }
+
+        interval: 500
+
+    }
+
     PlasmaCore.DataSource {
         id: nvidiaDS
         engine: 'executable'

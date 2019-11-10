@@ -214,12 +214,18 @@ Item {
             atiDS.connectedSources = []
         }
 
+        if (nvmeDS.connectedSources === undefined) {
+            nvmeDS.connectedSources = []
+        }
+
         systemmonitorSourcesToAdd.length = 0
         systemmonitorDS.connectedSources.length = 0
         udisksDS.connectedSources.length = 0
         udisksDS.cmdSourceBySourceName = {}
         nvidiaDS.connectedSources.length = 0
         atiDS.connectedSources.length = 0
+        nvmeDS.connectedSources.length = 0
+        nvmeDS.cmdSourceBySourceName = {}
 
         ModelUtils.initModels(resources, temperatureModel)
 
@@ -277,7 +283,16 @@ Item {
 
             addToSourcesOfDatasource(atiDS, atiDS.atiSource)
 
-        } else {
+        } else if (source.indexOf('nvme/') === 0) {
+            var diskLabel = source.substring('nvme/'.length)
+            var cmdSource = ModelUtils.getNvmeTemperatureCmd(diskLabel)
+            nvmeDS.cmdSourceBySourceName[cmdSource] = source
+
+            dbgprint('adding source to nvmeDS: ' + cmdSource)
+
+            addToSourcesOfDatasource(nvmeDS, cmdSource)
+        }
+        else {
 
             dbgprint('adding source to systemmonitorDS: ' + source)
 
@@ -351,6 +366,27 @@ Item {
                 dbgprint('new data error: ' + data.stderr)
             } else {
                 temperature = ModelUtils.getCelsiaFromUdisksStdout(data.stdout)
+            }
+
+            ModelUtils.updateTemperatureModel(temperatureModel, cmdSourceBySourceName[sourceName], temperature)
+        }
+        interval: updateInterval
+    }
+
+    PlasmaCore.DataSource {
+        id: nvmeDS
+        engine: 'executable'
+        property var cmdSourceBySourceName
+
+        onNewData: {
+
+            dbgprint('nvme new data - valid: ' + valid + ', stdout: ' + data.stdout)
+
+            var temperature = 0
+            if (data['exit code'] > 0) {
+                dbgprint('new data error: ' + data.stderr)
+            } else {
+                temperature = ModelUtils.getCelsiaFromNvmeStdout(data.stdout)
             }
 
             ModelUtils.updateTemperatureModel(temperatureModel, cmdSourceBySourceName[sourceName], temperature)
