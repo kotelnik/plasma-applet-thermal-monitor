@@ -105,13 +105,13 @@ Item {
         print('resources: ' + cfg_resources)
     }
     
-    
+
     function fillAddResourceDialogAndOpen(temperatureObj, editResourceIndex) {
         
         // set dialog title
         addResourceDialog.addResource = temperatureObj === null
         addResourceDialog.editResourceIndex = editResourceIndex
-        
+
         temperatureObj = temperatureObj || {
             alias: '',
             overrideLimitTemperatures: false,
@@ -517,8 +517,9 @@ Item {
     PlasmaCore.DataSource {
         id: systemmonitorDS
         engine: 'systemmonitor'
+        interval: 500
     }
-    
+
     PlasmaCore.DataSource {
         id: udisksDS
         engine: 'executable'
