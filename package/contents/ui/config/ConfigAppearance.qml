@@ -10,7 +10,8 @@ Item {
     property alias cfg_temperatureRightMargin: temperatureRightMargin.value
     property alias cfg_iconBottomMargin: iconBottomMargin.value
     property alias cfg_enableLabelDropShadow: enableLabelDropShadow.checked
-    
+    property alias cfg_transparentBackground: transparentBackground.checked
+
     GridLayout {
         columns: 2
         anchors.left: parent.left
@@ -86,6 +87,12 @@ Item {
             id: enableLabelDropShadow
             Layout.columnSpan: 2
             text: i18n('Enable label drop shadow')
+        }
+
+        CheckBox {
+            id: transparentBackground
+            Layout.columnSpan: 2
+            text: i18n('Transparent background')
         }
     }
     

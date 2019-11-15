@@ -32,7 +32,11 @@ Item {
 
     property bool initialized: false
 
+    
     // configuration
+
+    
+
     property int temperatureUnit: plasmoid.configuration.temperatureUnit
     property string configuredResources: plasmoid.configuration.resources
     property int baseWarningTemperature: plasmoid.configuration.warningTemperature
@@ -46,14 +50,14 @@ Item {
     property color warningColor: Qt.tint(theme.textColor, '#60FF0000')
     property var textFontFamily: theme.defaultFont.family
 
-    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
-
     property double aliasFontSize: itemHeight * plasmoid.configuration.aliasFontSize * 0.01
     property double temperatureFontSize: itemHeight * plasmoid.configuration.temperatureFontSize * 0.01
     property double iconFontSize: itemHeight * plasmoid.configuration.iconFontSize * 0.01
     property double temperatureRightMargin: itemHeight * plasmoid.configuration.temperatureRightMargin * 0.01
     property double iconBottomMargin: itemHeight * plasmoid.configuration.iconBottomMargin * 0.01
+    
     property bool enableLabelDropShadow: plasmoid.configuration.enableLabelDropShadow
+    property bool transparentBackground: plasmoid.configuration.transparentBackground
 
     property var systemmonitorAvailableSources
     property var systemmonitorSourcesToAdd
@@ -70,6 +74,10 @@ Item {
     Layout.preferredHeight: widgetHeight
 
     property bool debugLogging: false
+
+    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
+    Plasmoid.backgroundHints: transparentBackground ? "NoBackground":"StandardBackground";
+
 
     function dbgprint(msg) {
         if (!debugLogging) {
