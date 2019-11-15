@@ -36,6 +36,9 @@
         <entry name="enableLabelDropShadow" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="transparentBackground" type="Bool">
+            <default>false</default>
+        </entry>
     </group>
 
     <group name="Misc">
