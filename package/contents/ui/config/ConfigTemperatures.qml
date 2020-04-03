@@ -10,6 +10,7 @@ Item {
     id: resourcesConfigPage
     
     property double tableWidth: parent.width
+    property double tableHeight: parent.height
 
     property string cfg_resources
     property alias cfg_warningTemperature: warningTemperatureSpinBox.value
@@ -271,7 +272,7 @@ Item {
                 }
                 enabled: addResourceDialog.virtualSelected
                 Layout.preferredWidth: tableWidth/2
-                Layout.preferredHeight: contentHeight
+                Layout.preferredHeight: tableHeight/2
             }
             
             Item {

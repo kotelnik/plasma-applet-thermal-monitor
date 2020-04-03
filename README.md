@@ -24,5 +24,13 @@ or
 $ sudo rm -r /usr/share/plasma/plasmoids/org.kde.thermalMonitor
 $ sudo rm /usr/share/kservices5/plasma-applet-org.kde.thermalMonitor.desktop
 ```
+
+### DEV DEPENDENCIES
+
+In Arch Linux:
+```sh
+sudo pacman -S kde-development-environment-meta
+```
+
 ### LICENSE
 This project is licensed under the [GNU General Public License v2.0](https://www.gnu.org/licenses/gpl-2.0.html) and is therefore Free Software. A copy of the license can be found in the [LICENSE file](LICENSE).
