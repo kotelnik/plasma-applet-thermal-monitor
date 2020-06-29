@@ -524,83 +524,84 @@ Item {
         engine: 'executable'
         
         connectedSources: [ ModelUtils.UDISKS_DEVICES_CMD ]
-        
+        property bool prepared: false
+
         onNewData: {
-            connectedSources.length = 0
-            
-            if (data['exit code'] > 0) {
-                print('New data incomming. Source: ' + sourceName + ', ERROR: ' + data.stderr);
-                return
-            }
-            
-            print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
-            
-            var pathsToCheck = ModelUtils.parseUdisksPaths(data.stdout)
-            pathsToCheck.forEach(function (pathObj) {
-                var cmd = ModelUtils.UDISKS_VIRTUAL_PATH_PREFIX + pathObj.name
-                comboboxModel.append({
-                    text: cmd,
-                    val: cmd
+            if (!prepared)
+            {
+                //connectedSources.length = 0
+                
+                if (data['exit code'] > 0) {
+                    print('New data incomming. Source: ' + sourceName + ', ERROR: ' + data.stderr);
+                    return
+                }
+                
+                print('New data incomming. Source: ' + sourceName + ', data: ' + data.stdout);
+                
+                var pathsToCheck = ModelUtils.parseUdisksPaths(data.stdout)
+                pathsToCheck.forEach(function (pathObj) {
+                    var cmd = ModelUtils.UDISKS_VIRTUAL_PATH_PREFIX + pathObj.name
+                    comboboxModel.append({
+                        text: cmd,
+                        val: cmd
+                    })
                 })
-            })
-            
+                prepared = true
+            }
         }
-        
-        interval: 500
+        //interval: 500
     }
-    
+
     PlasmaCore.DataSource {
         id: nvidiaDS
         engine: 'executable'
         
         connectedSources: [ 'nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader' ]
-        
         property bool prepared: false
         
         onNewData: {
-            nvidiaDS.connectedSources.length = 0
-            
-            if (data['exit code'] > 0) {
+            if (!prepared)
+            {
+                //nvidiaDS.connectedSources.length = 0
+                if (data['exit code'] > 0) {
+                    prepared = true
+                    return
+                }
+                
+                comboboxModel.append({
+                    text: 'nvidia-smi',
+                    val: 'nvidia-smi'
+                })
                 prepared = true
-                return
             }
-            
-            comboboxModel.append({
-                text: 'nvidia-smi',
-                val: 'nvidia-smi'
-            })
-            
-            prepared = true
         }
-        
-        interval: 500
+        //interval: 500
     }
-    
+
     PlasmaCore.DataSource {
         id: atiDS
         engine: 'executable'
         
         connectedSources: [ 'aticonfig --od-gettemperature' ]
-        
         property bool prepared: false
         
         onNewData: {
-            atiDS.connectedSources.length = 0
-            
-            if (data['exit code'] > 0) {
+            if (!prepared)
+            {
+                //atiDS.connectedSources.length = 0
+                if (data['exit code'] > 0) {
+                    prepared = true
+                    return
+                }
+                
+                comboboxModel.append({
+                    text: 'aticonfig',
+                    val: 'aticonfig'
+                })
                 prepared = true
-                return
             }
-            
-            comboboxModel.append({
-                text: 'aticonfig',
-                val: 'aticonfig'
-            })
-            
-            prepared = true
         }
-        
-        interval: 500
+        //interval: 500
     }
-    
+        
 }
