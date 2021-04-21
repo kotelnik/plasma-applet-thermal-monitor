@@ -323,8 +323,9 @@ Item {
             }
             SpinBox {
                 id: warningTemperatureItem
-                stepSize: 10
+                stepSize: 1
                 minimumValue: 10
+                maximumValue: 200
                 enabled: overrideLimitTemperatures.checked
             }
             
@@ -334,8 +335,9 @@ Item {
             }
             SpinBox {
                 id: meltdownTemperatureItem
-                stepSize: 10
+                stepSize: 1
                 minimumValue: 10
+                maximumValue: 200
                 enabled: overrideLimitTemperatures.checked
             }
             
