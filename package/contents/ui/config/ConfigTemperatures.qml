@@ -356,6 +356,11 @@ Item {
             font.bold: true
             Layout.alignment: Qt.AlignLeft
         }
+         
+        Label {
+            text: i18n('You need ksysguard to show resources.')
+            Layout.alignment: Qt.AlignLeft
+        }
         
         Item {
             width: 2
